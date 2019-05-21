@@ -7,7 +7,7 @@
 #include "IntersectList.h"
 using namespace std;
 
-Color raytrace(const Ray& r, Intersectable *world, int depth)
+Color raytrace(const Ray& r, Intersectable *world, int depth, Light *lights)
 {
   Intersection isect;
   if (world->intersect(r, 0.0001f, FLT_MAX, isect))
