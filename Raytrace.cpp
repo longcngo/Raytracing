@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <cfloat>
+#include <ctime>
 #include "Shapes.h"
 #include "Camera.h"
 #include "Material.h"
@@ -101,7 +102,7 @@ void scan_image(int x_max, int y_max, int samples)
 {
 
   ofstream outfile;
-  outfile.open("output/raytrace_24.ppm", ios::out | ios::trunc);
+  outfile.open("output/raytrace_23.ppm", ios::out | ios::trunc);
   outfile << "P3\n" << x_max << " " << y_max << "\n255\n";
 
   // Intersectable *list[5];
@@ -121,8 +122,8 @@ void scan_image(int x_max, int y_max, int samples)
   Camera cam = Camera(float(x_max)/float(y_max));
   Intersectable *world;
 
-  world = simple_sphere_scene(cam, x_max, y_max);
-  //world = random_scene(cam, x_max, y_max);
+  //world = simple_sphere_scene(cam, x_max, y_max);
+  world = random_scene(cam, x_max, y_max);
 
   for (int j = y_max-1; j >= 0; j--) {
     for (int i = 0; i < x_max; i++) {
@@ -155,6 +156,32 @@ void scan_image(int x_max, int y_max, int samples)
 
 int main()
 {
-  scan_image(200, 200, 100);
-  return 0;
+    std::clock_t start;
+    double duration;
+
+    int image_w = 500;
+    int image_h = 500;
+    int samples = 100;
+
+    std::cout << "Settings: " << '\n';
+    std::cout << "image_w" << image_w << '\n';
+    std::cout << "image_h" << image_h << '\n';
+    std::cout << "samples" << samples << '\n';
+    std::cout << "Raytracing Start!" << '\n';
+
+    start = std::clock();
+
+    scan_image(image_w, image_h, samples);
+
+    duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+
+    std::cout << "Raytracing End!" << '\n';
+    std::cout << "Time Elapsed: " << duration <<'\n';
+
+    ofstream res;
+    res.open("output/raytrace_23.txt", ios::out | ios::trunc);
+    res << "Time Elapsed: " << duration <<'\n';
+    res.close();
+
+    return 0;
 }
