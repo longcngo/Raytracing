@@ -41,7 +41,7 @@ bool IntersectList::intersect(const Ray& r, float t_min, float t_max, Intersecti
     return hit_at_all;
 }
 
-bool IntersectList::bounding_box(float t0, float t1, bbox& box)
+bool IntersectList::bounding_box(float t0, float t1, bbox& box) const
 {
     if (list_size < 1)
     {
@@ -50,7 +50,7 @@ bool IntersectList::bounding_box(float t0, float t1, bbox& box)
 
     bbox temp_box;
 
-    if (!(list[0]->bounding_box(t0, t1, temp_box)))
+    if (!(isect_list[0]->bounding_box(t0, t1, temp_box)))
     {
         return false;
     }
@@ -61,13 +61,13 @@ bool IntersectList::bounding_box(float t0, float t1, bbox& box)
 
     for (int i = 1; i < list_size; i++)
     {
-        if (!(list[i]->bounding_box(t0, t1, temp_box)))
+        if (!(isect_list[i]->bounding_box(t0, t1, temp_box)))
         {
             return false;
         }
         else
         {
-            box = surrounding_box(box, temp_box)
+            box = surrounding_box(box, temp_box);
         }
     }
 

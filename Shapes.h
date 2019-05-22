@@ -122,8 +122,8 @@ public:
 
     virtual bool bounding_box(float t0, float t1, bbox& box) const
     {
-        box0 = bbox(center0 - Vec3(radius, radius, radius), center0 + Vec3(radius, radius, radius));
-        box1 = bbox(center1 - Vec3(radius, radius, radius), center1 + Vec3(radius, radius, radius));
+        bbox box0 = bbox(center0 - Vec3(radius, radius, radius), center0 + Vec3(radius, radius, radius));
+        bbox box1 = bbox(center1 - Vec3(radius, radius, radius), center1 + Vec3(radius, radius, radius));
         box = surrounding_box(box0, box1);
         return true;
     }
