@@ -49,8 +49,6 @@ public:
         }
     }
 
-    virtual Vec3 midpoint() { return center; }
-
     virtual bool bounding_box(float t0, float t1, bbox& box) const
     {
         box = bbox(center - Vec3(radius, radius, radius), center + Vec3(radius, radius, radius));
@@ -117,8 +115,6 @@ public:
             return false;
         }
     }
-
-    virtual Vec3 midpoint() { return 0.5f*(center1-center0); }
 
     virtual bool bounding_box(float t0, float t1, bbox& box) const
     {
@@ -211,8 +207,6 @@ class Triangle : public Intersectable
         }
 
     }
-
-    virtual Vec3 midpoint() { return 0.33f*(p0+p1+p2); }
 
     virtual bool bounding_box(float t0, float t1, bbox& box) const
     {

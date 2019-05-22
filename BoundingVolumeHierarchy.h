@@ -16,51 +16,53 @@ class BVHNode : public Intersectable
         virtual bool bounding_box(float t0, float t1, bbox& box) const;
 };
 
+
 BVHNode::BVHNode(Intersectable **l, int n, float time0, float time1)
 {
     if (n == 1)
     {
         left = right = l[0];
-        bb = l[0]->bounding_box(t0, t1, bb);
     }
     else if (n == 2)
     {
         left = l[0];
         right = l[1];
-        bb = surrounding_box(l[0]->bounding_box(t0, t1, bb), l[1]->bounding_box(t0, t1, bb));
     }
     else
     {
         int axis = int(3*drand48());
-        bbox list_box = *l->bounding_box(t0, t1, bb);
-        Vec3 midpoint = 0.5f*(l_box.max()-list_box.min());
-        Intersectable **l_list = new Intersectable*[n+1];
-        Intersectable **r_list = new Intersectable*[n+1];
-        int l_idx, r_idx;
+        bbox list_box;
+        (*l)->bounding_box(time0, time1, list_box);
+        float pivot = 0.5f*(list_box.max()-list_box.min())[axis];
+        int midpoint = 0;
+        bbox box_temp;
+        Vec3 centroid;
         for (int i = 0; i < n; i++)
         {
-            if (l[i]->midpoint()[axis] < midpoint[axis])
+            l[i]->bounding_box(time0, time1, box_temp);
+            centroid =  0.5f*(box_temp.max()-box_temp.min());
+            if (centroid[axis] < pivot)
             {
-                l_list[l_idx++] = l[i];
-            }
-            else
-            {
-                r_list[r_idx++] = l[i];
+                Intersectable* isect_temp = l[i];
+                l[i] = l[midpoint];
+                l[midpoint] = isect_temp;
+                midpoint++;
             }
         }
-        left = new BVHNode(l_list, l_idx, time0, time1);
-        right = new BVHNode(r_list, r_idx, time0, time1);
-        bbox l_box, r_box;
-        if (!left->bounding_box(time0, time1, l_box) || !right->bounding_box(time0, time1, r_box))
-        {
-            std::cerr << "BVHNode's Bounding Box hasn't been constructed yet" << '\n';
-        }
-        bb = surrounding_box(left->bounding_box(), right->bounding_box());
+        if (midpoint == 0 || midpoint == n) { midpoint = n/2; }
 
+        left = new BVHNode(l, midpoint, time0, time1);
+        right = new BVHNode(&l[midpoint], n-midpoint, time0, time1);
     }
+    bbox l_box, r_box;
+    if (!left->bounding_box(time0, time1, l_box) || !right->bounding_box(time0, time1, r_box))
+    {
+        std::cerr << "BVHNode's Bounding Box hasn't been constructed yet" << '\n';
+    }
+    bb = surrounding_box(l_box, r_box);
 }
 
-bool BVHNode::intersect(const Ray& r, float t_min, float t_max, Intersection& isect)
+bool BVHNode::intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const
 {
     if (bb.intersect(r, t_min, t_max))
     {
@@ -102,9 +104,9 @@ bool BVHNode::intersect(const Ray& r, float t_min, float t_max, Intersection& is
     }
 }
 
-bbox BVHNode::bounding_box(float t0, float t1, bbox& box)
+bool BVHNode::bounding_box(float t0, float t1, bbox& box) const
 {
-    bb = box;
+    box = bb;
     return true;
 }
 

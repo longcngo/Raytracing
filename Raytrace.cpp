@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Material.h"
 #include "IntersectList.h"
+#include "BoundingVolumeHierarchy.h"
 using namespace std;
 
 Color raytrace(const Ray& r, Intersectable *world, int depth)
@@ -41,7 +42,9 @@ Intersectable *random_scene(Camera& cam, float x_max, float y_max)
     Vec3 vup = Vec3(0.0f,1.0f,0.0f);
     float dist_to_focus = 10.0f;
     float aperature = 0.1f;
-    cam = Camera(lookfrom, lookat, vup, 20.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+    float t0 = 0;
+    float t1 = 1;
+    cam = Camera(lookfrom, lookat, vup, 20.0f, float(x_max)/float(y_max), aperature, dist_to_focus, t0, t1);
 
     int n = 50000;
     Intersectable **list = new Intersectable*[n+1];
@@ -79,7 +82,7 @@ Intersectable *random_scene(Camera& cam, float x_max, float y_max)
     list[i++] = new Sphere(Vec3(0.0f,1.0f,0.0f), 1.0f, new Dielectric(1.5));
     list[i++] = new Sphere(Vec3(4.0f,1.0f,0.0f), 1.0f, new Metal(Color(0.7f,0.6f,0.5f), 0.0f));
 
-    return new IntersectList(list, i);
+    return new BVHNode(list, i, t0, t1);
 }
 
 Intersectable *simple_sphere_scene(Camera& cam, float x_max, float y_max)
