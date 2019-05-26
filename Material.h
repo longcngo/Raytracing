@@ -47,6 +47,8 @@ float schlick(float cosine, float ref_idx)
 class Material
 {
 public:
+    bool isReflective;
+
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const = 0;
 };
 
@@ -55,7 +57,7 @@ class Lambertian : public Material
 public:
     Color albedo;
 
-    Lambertian(const Color& a) : albedo(a) {}
+    Lambertian(const Color& a) { albedo = a; isReflective = false; }
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const
     {
         Vec3 target = isect.p + isect.normal + random_in_unit_sphere();
@@ -72,7 +74,8 @@ public:
     Color albedo;
     float fuzz;
 
-    Metal(const Color& a, float f) : albedo(a) {if (f > 1.0f) { fuzz = 1.0f;} else { fuzz = f; }}
+    Metal(const Color& a, float f) { albedo = a; isReflective = true;
+         if (f > 1.0f) { fuzz = 1.0f;} else { fuzz = f; } }
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const
     {
         Vec3 reflected = reflect(r_in.dir, isect.normal);
@@ -88,7 +91,7 @@ class Dielectric : public Material
 public:
     float ref_idx;
 
-    Dielectric(float ri) { ref_idx = ri; }
+    Dielectric(float ri) { ref_idx = ri; isReflective = true; }
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const
     {
         Vec3 outward_normal;

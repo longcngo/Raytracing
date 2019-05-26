@@ -39,7 +39,7 @@ Color direct_lighting(const Ray& r, Intersectable *world, LightList *lights)
 {
     Intersection isect;
     Color radience;
-    if (world->intersect(r, 0.0001f, FLT_MAX, isect))
+    if (world->intersect(r, 0.0001f, FLT_MAX, isect) && !isect.mat->isReflective)
     {
         Intersection isect_shadow;
         LightSample ls;
@@ -74,12 +74,9 @@ Color direct_lighting(const Ray& r, Intersectable *world, LightList *lights)
 
 }
 
-void scan_image(int x_max, int y_max, int samples)
+void scan_image(ofstream& os, int x_max, int y_max, int samples)
 {
-
-    ofstream outfile;
-    outfile.open("output/raytrace_37.ppm", ios::out | ios::trunc);
-    outfile << "P3\n" << x_max << " " << y_max << "\n255\n";
+    os << "P3\n" << x_max << " " << y_max << "\n255\n";
 
     // Intersectable *list[5];
     // list[0] = new Sphere(Vec3(0.0f,0.0f,-1.0f), 0.5f, new Lambertian(Color(0.1f,0.2f,0.5f)));
@@ -127,11 +124,10 @@ void scan_image(int x_max, int y_max, int samples)
             col.sqrt();
             col *= 255.99f;
             col.to_int();
-            outfile << col << "\n";
+            os << col << "\n";
         }
     }
 
-    outfile.close();
     //stbi_write_png("raytrace.png", x_max, y_max, int comp, const void *data, int stride_in_bytes);
 }
 
@@ -141,19 +137,23 @@ int main()
     std::clock_t start;
     double duration;
 
-    int image_w = 500;
-    int image_h = 500;
+    ofstream outfile;
+    outfile.open("output/raytrace_37.ppm", ios::out | ios::trunc);
+    int image_w = 200;
+    int image_h = 200;
     int samples = 100;
 
-    std::cout << "Settings: " << '\n';
-    std::cout << "image_w" << image_w << '\n';
-    std::cout << "image_h" << image_h << '\n';
-    std::cout << "samples" << samples << '\n';
+    std::cout << "Settings" << '\n';
+    std::cout << "image_w: " << image_w << '\n';
+    std::cout << "image_h: " << image_h << '\n';
+    std::cout << "samples: " << samples << '\n';
     std::cout << "Raytracing Start!" << '\n';
 
     start = std::clock();
 
-    scan_image(image_w, image_h, samples);
+    scan_image(outfile, image_w, image_h, samples);
+
+    outfile.close();
 
     duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
