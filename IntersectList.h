@@ -6,11 +6,11 @@
 /*
 
 Intersect_List:
-  A container for every object that a ray can interact i.e. any object extending
-  "intersectable".
+A container for every object that a ray can interact i.e. any object extending
+"intersectable".
 
-  The function from "intersectable", loops through every object to get the closest
-  object that the ray would collide with, returning true if an object was hit at all
+The function from "intersectable", loops through every object to get the closest
+object that the ray would collide with, returning true if an object was hit at all
 
 */
 

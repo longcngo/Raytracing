@@ -5,15 +5,15 @@
 
 class BVHNode : public Intersectable
 {
-    public:
-        bbox bb;
-        Intersectable *left;
-        Intersectable *right;
+public:
+    bbox bb;
+    Intersectable *left;
+    Intersectable *right;
 
-        BVHNode(){}
-        BVHNode(Intersectable **l, int n, float time0, float time1);
-        virtual bool intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const;
-        virtual bool bounding_box(float t0, float t1, bbox& box) const;
+    BVHNode(){}
+    BVHNode(Intersectable **l, int n, float time0, float time1);
+    virtual bool intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const;
+    virtual bool bounding_box(float t0, float t1, bbox& box) const;
 };
 
 

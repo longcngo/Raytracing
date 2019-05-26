@@ -8,15 +8,15 @@ inline float ffmax(float a, float b){ return a > b ? a : b; }
 
 class bbox
 {
-    public:
-        Vec3 _min;
-        Vec3 _max;
+public:
+    Vec3 _min;
+    Vec3 _max;
 
-        bbox(){}
-        bbox( const Vec3& a, const Vec3& b ){ _min = a; _max = b; }
-        Vec3 min() const { return _min; }
-        Vec3 max() const { return _max; }
-        inline bool intersect(const Ray& r, float t_min, float t_max) const;
+    bbox(){}
+    bbox( const Vec3& a, const Vec3& b ){ _min = a; _max = b; }
+    Vec3 min() const { return _min; }
+    Vec3 max() const { return _max; }
+    inline bool intersect(const Ray& r, float t_min, float t_max) const;
 };
 
 inline bool bbox::intersect(const Ray& r, float t_min, float t_max) const
@@ -44,11 +44,11 @@ inline bool bbox::intersect(const Ray& r, float t_min, float t_max) const
 inline bbox surrounding_box(bbox box0, bbox box1)
 {
     Vec3 small = Vec3(ffmin(box0.min().x, box1.min().x),
-                      ffmin(box0.min().y, box1.min().y),
-                      ffmin(box0.min().z, box1.min().z));
+    ffmin(box0.min().y, box1.min().y),
+    ffmin(box0.min().z, box1.min().z));
     Vec3 large = Vec3(ffmax(box0.max().x, box1.max().x),
-                      ffmax(box0.max().y, box1.max().y),
-                      ffmax(box0.max().z, box1.max().z));
+    ffmax(box0.max().y, box1.max().y),
+    ffmax(box0.max().z, box1.max().z));
     return bbox(small, large);
 }
 
