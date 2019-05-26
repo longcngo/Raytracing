@@ -8,34 +8,80 @@
 #include "Material.h"
 #include "IntersectList.h"
 #include "BoundingVolumeHierarchy.h"
+#include "Lights.h"
 using namespace std;
 
-Color raytrace(const Ray& r, Intersectable *world, int depth)
+Color background(const Ray& r)
+{
+    //return Color(0.1,0.1,0.1);
+    float t = 0.5*(unit_vector(r.d()).y + 1.0f);
+    return (1.0f-t)*Color(1.0f,1.0f,1.0f) + t*Color(0.5f,0.7f,1.0f);
+}
+
+Color indirect_lighting(const Ray& r, Intersectable *world, int depth)
 {
     Intersection isect;
     if (world->intersect(r, 0.0001f, FLT_MAX, isect))
     {
-        Ray scattered;
-        Color attenuation;
-        if (depth < 50 && isect.mat->scatter(r, isect, attenuation, scattered))
-        {
-            depth += 1;
-            Color new_attenuation = raytrace(scattered, world, depth);
-            return attenuation*new_attenuation;
-        }
-        else
-        {
-            return Color(0.0f,0.0f,0.0f);
-        }
+      depth += 1;
+      Color new_attenuation = indirect_lighting(scattered, world, depth);
+      return attenuation*new_attenuation;
     }
     else
     {
         float t = 0.5*(unit_vector(r.d()).y + 1.0f);
         return (1.0f-t)*Color(1.0f,1.0f,1.0f) + t*Color(0.5f,0.7f,1.0f);
     }
+  }
+  else
+  {
+      return background(r);
+  }
 }
 
-Intersectable *random_scene(Camera& cam, float x_max, float y_max)
+Color direct_lighting(const Ray& r, Intersectable *world, LightList *lights)
+{
+    Intersection isect;
+    Color radience;
+    if (world->intersect(r, 0.0001f, FLT_MAX, isect))
+    {
+        Intersection isect_shadow;
+      LightSample ls;
+      Ray scattered;
+      Color attenuation;
+      int num_lights = lights->list_size;
+      for (int i = 0; i < num_lights; i++) {
+        if (lights->light_list[i]->get_light(isect.p, ls))
+         {
+             float light_dist = (ls.p-isect.p).squared_length();
+             Ray shadow = Ray(isect.p + Vec3(0.01f,0.01f,0.01f), ls.dir , r.t());
+             if (!(world->intersect(shadow, 0.0001f, FLT_MAX, isect_shadow))
+                 || (light_dist <= isect_shadow.t))
+             {
+                 //std::cout << ls.c << '\n';
+                 isect.mat->scatter(r, isect, attenuation, scattered);
+                 float ndotl = dot(isect.normal, ls.dir);
+                 if (ndotl > 0.0f) {
+                    attenuation *= ls.c;
+                    radience += attenuation;
+                 }
+                 //std::cout << radience << '\n';
+             }
+         }
+        }
+
+      return radience;
+    }
+
+    else
+    {
+        return background(r);
+    }
+
+}
+
+
+Intersectable *random_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(13.0f, 2.0f, 3.0f);
     Vec3 lookat = Vec3(0.0f,0.0f,0.0f);
@@ -85,72 +131,159 @@ Intersectable *random_scene(Camera& cam, float x_max, float y_max)
     return new BVHNode(list, i, t0, t1);
 }
 
-Intersectable *simple_sphere_scene(Camera& cam, float x_max, float y_max)
+Intersectable *simple_sphere_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
-    Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
-    Vec3 lookat = Vec3(-0.15f,0.0f,0.5f);
-    Vec3 vup = Vec3(0.0f,1.0f,0.0f);
-    float dist_to_focus = 10.0f;
-    float aperature = 0.1f;
-    cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+  Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
+  Vec3 lookat = Vec3(-0.15f,0.0f,0.5f);
+  Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+  float dist_to_focus = 10.0f;
+  float aperature = 0.1f;
+  cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
 
-    Intersectable **list = new Intersectable*[2];
-    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
-    list[1] = new Sphere(Vec3(-0.25f, 0.0f, 0.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
+  Light ** l_list = new Light*[1];
+  l_list[0] = new PointLight(Vec3(10.0f, 10.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+  lights = LightList(l_list , 1);
 
-    return new IntersectList(list, 2);
+  Intersectable **list = new Intersectable*[2];
+  list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
+  list[1] = new Sphere(Vec3(-0.25f, 0.0f, 0.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
+
+  return new IntersectList(list, 2);
 }
 
+Intersectable *simple_spotlight_scene(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+  Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
+  Vec3 lookat = Vec3(-0.15f,0.0f,0.5f);
+  Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+  float dist_to_focus = 10.0f;
+  float aperature = 0.1f;
+  cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+  Light ** l_list = new Light*[1];
+  l_list[0] = new SpotLight(Vec3(10.0f, 10.0f, 5.0f), Vec3(0.0f, 0.0f, 0.0f), 50.0f, 30.0f, Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+  lights = LightList(l_list , 1);
+
+  Intersectable **list = new Intersectable*[2];
+  list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
+  list[1] = new Sphere(Vec3(-0.25f, 0.0f, 0.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
+
+  return new IntersectList(list, 2);
+}
+
+Intersectable *simple_mirror_scene(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+  Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
+  Vec3 lookat = Vec3(0.25f,0.0f,0.5f);
+  Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+  float dist_to_focus = 10.0f;
+  float aperature = 0.1f;
+  cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+  Light ** l_list = new Light*[1];
+  l_list[0] = new PointLight(Vec3(10.0f, 10.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+  lights = LightList(l_list , 1);
+
+  Intersectable **list = new Intersectable*[3];
+  list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
+  list[1] = new Sphere(Vec3(-1.25f, 0.0f, 1.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
+  list[2] = new Sphere(Vec3(1.25f,0.0f,-1.25f), 1.25f, new Metal(Color(0.8f,0.6f,0.2f), 0.3f));
+  return new IntersectList(list, 3);
+}
+
+Intersectable *simple_glass_scene(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+  Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
+  Vec3 lookat = Vec3(0.25f,0.0f,0.5f);
+  Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+  float dist_to_focus = 10.0f;
+  float aperature = 0.1f;
+  cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+  Light ** l_list = new Light*[1];
+  l_list[0] = new PointLight(Vec3(10.0f, 10.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+  lights = LightList(l_list , 1);
+
+  Intersectable **list = new Intersectable*[3];
+  list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
+  list[1] = new Sphere(Vec3(-1.25f, 0.0f, 1.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
+  list[2] = new Sphere(Vec3(1.25f,0.0f,-1.25f), 1.25f, new Dielectric(1.5f));
+  return new IntersectList(list, 3);
+}
+
+Intersectable *simple_emitter_scene(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+  Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
+  Vec3 lookat = Vec3(0.25f,0.0f,0.5f);
+  Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+  float dist_to_focus = 10.0f;
+  float aperature = 0.1f;
+  cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+  Light ** l_list = new Light*[1];
+  l_list[0] = new SphereLight(Vec3(-1.25f, 0.0f, 1.25f), 1.25f, Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+  lights = LightList(l_list , 1);
+
+  Intersectable **list = new Intersectable*[2];
+  list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
+  list[1] = new Sphere(Vec3(1.25f, 0.0f, -1.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
+  return new IntersectList(list, 2);
+}
 
 void scan_image(int x_max, int y_max, int samples)
 {
 
-    ofstream outfile;
-    outfile.open("output/raytrace_24.ppm", ios::out | ios::trunc);
-    outfile << "P3\n" << x_max << " " << y_max << "\n255\n";
+  ofstream outfile;
+  outfile.open("output/raytrace_37.ppm", ios::out | ios::trunc);
+  outfile << "P3\n" << x_max << " " << y_max << "\n255\n";
 
-    // Intersectable *list[5];
-    // list[0] = new Sphere(Vec3(0.0f,0.0f,-1.0f), 0.5f, new Lambertian(Color(0.1f,0.2f,0.5f)));
-    // list[1] = new Sphere(Vec3(0.0f,-100.5f,-1.0f), 100.0f, new Lambertian(Color(0.8f,0.8f,0.0f)));
-    // list[2] = new Sphere(Vec3(1.0f,0.0f,-1.0f), 0.5f, new Metal(Color(0.8f,0.6f,0.2f), 0.3f));
-    // list[3] = new Sphere(Vec3(-1.0f,0.0f,-1.0f), 0.5f, new Dielectric(1.5f));
-    // list[4] = new Sphere(Vec3(-1.0f,0.0f,-1.0f), -0.45f, new Dielectric(1.5f));
-    // Intersectable *world = new IntersectList(list, 5);
+  // Intersectable *list[5];
+  // list[0] = new Sphere(Vec3(0.0f,0.0f,-1.0f), 0.5f, new Lambertian(Color(0.1f,0.2f,0.5f)));
+  // list[1] = new Sphere(Vec3(0.0f,-100.5f,-1.0f), 100.0f, new Lambertian(Color(0.8f,0.8f,0.0f)));
+  // list[2] = new Sphere(Vec3(1.0f,0.0f,-1.0f), 0.5f, new Metal(Color(0.8f,0.6f,0.2f), 0.3f));
+  // list[3] = new Sphere(Vec3(-1.0f,0.0f,-1.0f), 0.5f, new Dielectric(1.5f));
+  // list[4] = new Sphere(Vec3(-1.0f,0.0f,-1.0f), -0.45f, new Dielectric(1.5f));
+  // Intersectable *world = new IntersectList(list, 5);
 
-    // float R = cos(M_PI/4);
-    // Intersectable *list[2];
-    // list[0] = new Sphere(Vec3(-R,0.0f,-1.0f), R, new Lambertian(Color(1.0f,0.2f,0.0f)));
-    // list[1] = new Sphere(Vec3(R,0.0f,-1.0f), R, new Lambertian(Color(0.0f,0.2f,1.0f)));
-    // Intersectable *world = new IntersectList(list, 2);
+  // float R = cos(M_PI/4);
+  // Intersectable *list[2];
+  // list[0] = new Sphere(Vec3(-R,0.0f,-1.0f), R, new Lambertian(Color(1.0f,0.2f,0.0f)));
+  // list[1] = new Sphere(Vec3(R,0.0f,-1.0f), R, new Lambertian(Color(0.0f,0.2f,1.0f)));
+  // Intersectable *world = new IntersectList(list, 2);
 
-    Camera cam = Camera(float(x_max)/float(y_max));
-    Intersectable *world;
+  Camera cam = Camera(float(x_max)/float(y_max));
+  LightList lights;
+  Intersectable *world;
 
-    //world = simple_sphere_scene(cam, x_max, y_max);
-    world = random_scene(cam, x_max, y_max);
+  world = simple_sphere_scene(cam, lights, x_max, y_max);
+  //world = simple_spotlight_scene(cam, lights, x_max, y_max);
+  //world = simple_mirror_scene(cam, lights, x_max, y_max);
+  //world = simple_glass_scene(cam, lights, x_max, y_max);
+  //world = simple_emitter_scene(cam, lights, x_max, y_max);
+  //world = random_scene(cam, x_max, y_max);
 
-    for (int j = y_max-1; j >= 0; j--) {
-        for (int i = 0; i < x_max; i++) {
-            Color col = Color(0.0f,0.0f,0.0f);
-            for (int s = 0; s < samples; s++)
-            {
-                float ur = drand48();
-                float vr = drand48();
-                float u = float(i + ur)/float(x_max);
-                float v = float(j + vr)/float(y_max);
-                // std::cout << "u " << u << "\n";
-                // std::cout << "v " << v << "\n";
-                // std::cout << "ur " << ur << "\n";
-                // std::cout << "vr " << vr << "\n";
-                Ray r = cam.get_ray(u,v);
-                col += raytrace(r, world, 0);
-            }
-            col /= float(samples);
-            col.sqrt();
-            col *= 255.99f;
-            col.to_int();
-            outfile << col << "\n";
-        }
+  for (int j = y_max-1; j >= 0; j--) {
+    for (int i = 0; i < x_max; i++) {
+      Color col = Color(0.0f,0.0f,0.0f);
+      for (int s = 0; s < samples; s++)
+      {
+        float ur = drand48();
+        float vr = drand48();
+        float u = float(i + ur)/float(x_max);
+        float v = float(j + vr)/float(y_max);
+        // std::cout << "u " << u << "\n";
+        // std::cout << "v " << v << "\n";
+        // std::cout << "ur " << ur << "\n";
+        // std::cout << "vr " << vr << "\n";
+        Ray r = cam.get_ray(u,v);
+        col += indirect_lighting(r, world, 0);
+        col += direct_lighting(r, world, &lights);
+      }
+      col /= float(samples);
+      col.sqrt();
+      col *= 255.99f;
+      col.to_int();
+      outfile << col << "\n";
     }
 
     outfile.close();
