@@ -79,47 +79,16 @@ public:
     }
 };
 
-// class SphereLight : public Light
-// {
-// public:
-//     Sphere *light_sphere;
-//
-//     SphereLight(){}
-//     SphereLight(const Vec3& cen, const float r, const Color& c, const Color& is)
-//     { light_sphere = new Sphere(cen, r, new Lambertian(4*c)); light_color = c; intensity = is; }
-//     virtual bool get_light(const Vec3& point, LightSample& ls) const
-//     {
-//         //Intersection isect_sphere;
-//         //Ray point_to_sphere = Ray(point, unit_vector(point-(light_sphere->center)), 0.0f);
-//         // std::cout << point_to_sphere.o() << '\n';
-//         // std::cout << point_to_sphere.d() << '\n';
-//         // std::cout << light_sphere->center << '\n';
-//         // if (!light_sphere->intersect(point_to_sphere, 0.0001f, FLT_MAX, isect_sphere)) {
-//         //     return false;
-//         // }
-//         Vec3 p;
-//         float rad = light_sphere->radius;
-//         do {
-//           p = 2.0*Vec3(drand48(), drand48(), drand48())-Vec3(rad, rad, rad);
-//         } while(p.squared_length() >= rad);
-//         ls.p = p;
-//         ls.dir = ls.p - point;
-//         ls.c = intensity;
-//         ls.c *= (1/(ls.dir.squared_length()));
-//         ls.c = light_color;
-//         ls.dir.normalize();
-//         return true;
-//     }
-// };
-
 // class AreaLight : public Light
 // {
 //   public:
-//     PointLight **point_light_list;
-//     Color intensity;
-//     AreaLight(){}
-//     AreaLight(PointLight **l, const Color& is){ point_light_list = l; intensity = is; }
+//     Intersectable *shape;
 //
+//     virtual bool get_light(const Vec3& point, LightSample& ls) const = 0;
+// };
+//
+// class SphereLight : public AreaLight
+// {
 //
 // };
 

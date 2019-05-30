@@ -96,12 +96,12 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
     LightList lights;
     Intersectable *world;
 
-    world = simple_sphere_scene(cam, lights, x_max, y_max);
+    //world = simple_sphere_scene(cam, lights, x_max, y_max);
     //world = simple_spotlight_scene(cam, lights, x_max, y_max);
     //world = simple_mirror_scene(cam, lights, x_max, y_max);
     //world = simple_glass_scene(cam, lights, x_max, y_max);
     //world = simple_emitter_scene(cam, lights, x_max, y_max);
-    //world = random_scene(cam, x_max, y_max);
+    world = random_scene(cam, lights, x_max, y_max);
 
     for (int j = y_max-1; j >= 0; j--) {
         for (int i = 0; i < x_max; i++) {
@@ -139,8 +139,8 @@ int main()
 
     ofstream outfile;
     outfile.open("output/raytrace_37.ppm", ios::out | ios::trunc);
-    int image_w = 200;
-    int image_h = 200;
+    int image_w = 500;
+    int image_h = 500;
     int samples = 100;
 
     std::cout << "Settings" << '\n';

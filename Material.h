@@ -4,6 +4,7 @@
 struct Intersection;
 
 #include "Color.h"
+#include "Texture.h"
 #include "Ray.h"
 #include "Intersection.h"
 
@@ -55,14 +56,14 @@ public:
 class Lambertian : public Material
 {
 public:
-    Color albedo;
+    Texture *albedo;
 
-    Lambertian(const Color& a) { albedo = a; isReflective = false; }
+    Lambertian(Texture* a) { albedo = a; isReflective = false; }
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const
     {
         Vec3 target = isect.p + isect.normal + random_in_unit_sphere();
         scattered = Ray(isect.p, target-isect.p, r_in.t());
-        attenuation = albedo;
+        attenuation = albedo->value(Vec2(0.0f,0.0f), isect.p);
         return true;
     }
 
@@ -71,16 +72,16 @@ public:
 class Metal : public Material
 {
 public:
-    Color albedo;
+    Texture *albedo;
     float fuzz;
 
-    Metal(const Color& a, float f) { albedo = a; isReflective = true;
+    Metal(Texture* a, float f) { albedo = a; isReflective = true;
          if (f > 1.0f) { fuzz = 1.0f;} else { fuzz = f; } }
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const
     {
         Vec3 reflected = reflect(r_in.dir, isect.normal);
         scattered = Ray(isect.p, reflected + fuzz*random_in_unit_sphere(), r_in.t());
-        attenuation = albedo;
+        attenuation = albedo->value(Vec2(0.0f,0.0f), isect.p);
         return (dot(scattered.dir, isect.normal) > 0);
     }
 

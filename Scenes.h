@@ -23,8 +23,8 @@ Intersectable *simple_sphere_scene(Camera& cam, LightList& lights, float x_max, 
     lights = LightList(l_list , 1);
 
     Intersectable **list = new Intersectable*[2];
-    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
-    list[1] = new Sphere(Vec3(-0.25f, 0.0f, 0.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
+    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
+    list[1] = new Sphere(Vec3(-0.25f, 0.0f, 0.25f), 1.25f, new Lambertian(new ConstantTexture(Color(1.0f, 0.2f, 0.2f))));
 
     return new IntersectList(list, 2);
 }
@@ -43,8 +43,8 @@ Intersectable *simple_spotlight_scene(Camera& cam, LightList& lights, float x_ma
     lights = LightList(l_list , 1);
 
     Intersectable **list = new Intersectable*[2];
-    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
-    list[1] = new Sphere(Vec3(-0.25f, 0.0f, 0.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
+    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
+    list[1] = new Sphere(Vec3(-0.25f, 0.0f, 0.25f), 1.25f, new Lambertian(new ConstantTexture(Color(1.0f, 0.2f, 0.2f))));
 
     return new IntersectList(list, 2);
 }
@@ -63,9 +63,9 @@ Intersectable *simple_mirror_scene(Camera& cam, LightList& lights, float x_max, 
     lights = LightList(l_list , 1);
 
     Intersectable **list = new Intersectable*[3];
-    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
-    list[1] = new Sphere(Vec3(-1.25f, 0.0f, 1.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
-    list[2] = new Sphere(Vec3(1.25f,0.0f,-1.25f), 1.25f, new Metal(Color(0.8f,0.6f,0.2f), 0.3f));
+    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
+    list[1] = new Sphere(Vec3(-1.25f, 0.0f, 1.25f), 1.25f, new Lambertian(new ConstantTexture(Color(1.0f, 0.2f, 0.2f))));
+    list[2] = new Sphere(Vec3(1.25f,0.0f,-1.25f), 1.25f, new Metal(new ConstantTexture(Color(0.8f,0.6f,0.2f)), 0.3f));
     return new IntersectList(list, 3);
 }
 
@@ -83,8 +83,8 @@ Intersectable *simple_glass_scene(Camera& cam, LightList& lights, float x_max, f
     lights = LightList(l_list , 1);
 
     Intersectable **list = new Intersectable*[3];
-    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
-    list[1] = new Sphere(Vec3(-1.25f, 0.0f, 1.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
+    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
+    list[1] = new Sphere(Vec3(-1.25f, 0.0f, 1.25f), 1.25f, new Lambertian(new ConstantTexture(Color(1.0f, 0.2f, 0.2f))));
     list[2] = new Sphere(Vec3(1.25f,0.0f,-1.25f), 1.25f, new Dielectric(1.5f));
     return new IntersectList(list, 3);
 }
@@ -99,12 +99,14 @@ Intersectable *simple_glass_scene(Camera& cam, LightList& lights, float x_max, f
 //     cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
 //
 //     Light ** l_list = new Light*[1];
-//     l_list[0] = new SphereLight(Vec3(-1.25f, 0.0f, 1.25f), 1.25f, Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+//     SphereLight *spl = new SphereLight(Vec3(1.25f, 0.0f, -1.25f), 1.25f, Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+//     l_list[0] = spl;
 //     lights = LightList(l_list , 1);
 //
-//     Intersectable **list = new Intersectable*[2];
-//     list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
-//     list[1] = new Sphere(Vec3(1.25f, 0.0f, -1.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
+//     Intersectable **list = new Intersectable*[3];
+//     list[0] = spl->shape;
+//     list[1] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
+//     list[2] = new Sphere(Vec3(-1.25f, 0.0f, 1.25f), 1.25f, new Lambertian(Color(1.0f, 0.2f, 0.2f)));
 //     return new IntersectList(list, 2);
 // }
 
@@ -119,9 +121,14 @@ Intersectable *random_scene(Camera& cam, LightList& lights, float x_max, float y
     float t1 = 1;
     cam = Camera(lookfrom, lookat, vup, 20.0f, float(x_max)/float(y_max), aperature, dist_to_focus, t0, t1);
 
+    Light ** l_list = new Light*[1];
+    l_list[0] = new PointLight(Vec3(15.0f, 15.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+    lights = LightList(l_list , 1);
+
     int n = 50000;
     Intersectable **list = new Intersectable*[n+1];
-    list[0] = new Sphere(Vec3(0.0f,-1000.0f, 0.0f), 1000.0f, new Lambertian(Color(0.5f,0.5f,0.5f)));
+    Texture *checker = new CheckerTexture(new ConstantTexture(Color(0.2f, 0.3f, 0.1f)), new ConstantTexture(Color(0.9f, 0.9f, 0.9f)));
+    list[0] = new Sphere(Vec3(0.0f,-1000.0f, 0.0f), 1000.0f, new Lambertian(checker));
     int i = 1;
     Material *sphere_mat_ptr;
 
@@ -133,12 +140,12 @@ Intersectable *random_scene(Camera& cam, LightList& lights, float x_max, float y
             if ((cen-Vec3(4.0f,0.2f,0.0f)).length() > 0.9) {
                 if (choose_mat < 0.8) // diffuse
                 {
-                    sphere_mat_ptr = new Lambertian(Color(drand48()*drand48(), drand48()*drand48(), drand48()*drand48()));
+                    sphere_mat_ptr = new Lambertian(new ConstantTexture(Color(drand48()*drand48(), drand48()*drand48(), drand48()*drand48())));
                     list[i++] = new MovingSphere(cen, (cen+Vec3(0.0f, 0.5f*drand48(), 0.0f)), 0, 1, 0.2f, sphere_mat_ptr);
                 }
                 else if (choose_mat < 0.95) //metal
                 {
-                    sphere_mat_ptr = new Metal(Color(0.5f*(1+drand48()), 0.5f*(1+drand48()), 0.5f*(1+drand48())), 0.5*drand48());
+                    sphere_mat_ptr = new Metal(new ConstantTexture(Color(0.5f*(1+drand48()), 0.5f*(1+drand48()), 0.5f*(1+drand48()))), 0.5*drand48());
                     list[i++] = new Sphere(cen, 0.2f, sphere_mat_ptr);
                 }
                 else // glass
@@ -151,9 +158,9 @@ Intersectable *random_scene(Camera& cam, LightList& lights, float x_max, float y
         }
     }
 
-    list[i++] = new Sphere(Vec3(-4.0f,1.0f,0.0f), 1.0f, new Lambertian(Color(0.4f,0.2f,0.1f)));
+    list[i++] = new Sphere(Vec3(-4.0f,1.0f,0.0f), 1.0f, new Lambertian(new ConstantTexture(Color(0.4f,0.2f,0.1f))));
     list[i++] = new Sphere(Vec3(0.0f,1.0f,0.0f), 1.0f, new Dielectric(1.5));
-    list[i++] = new Sphere(Vec3(4.0f,1.0f,0.0f), 1.0f, new Metal(Color(0.7f,0.6f,0.5f), 0.0f));
+    list[i++] = new Sphere(Vec3(4.0f,1.0f,0.0f), 1.0f, new Metal(new ConstantTexture(Color(0.7f,0.6f,0.5f)), 0.0f));
 
     return new BVHNode(list, i, t0, t1);
 }
