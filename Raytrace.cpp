@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstdio>
-#include <ctime>
+#include <cfloat>
 #include "Scenes.h"
 using namespace std;
 
@@ -39,7 +39,7 @@ Color direct_lighting(const Ray& r, Intersectable *world, LightList *lights)
 {
     Intersection isect;
     Color radience;
-    if (world->intersect(r, 0.0001f, FLT_MAX, isect) && !isect.mat->isReflective)
+    if (world->intersect(r, 0.0001f, FLT_MAX, isect) && !(isect.mat->isReflective))
     {
         Intersection isect_shadow;
         LightSample ls;
@@ -97,6 +97,7 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
     Intersectable *world;
 
     //world = simple_sphere_scene(cam, lights, x_max, y_max);
+    //world = simple_texture_scene(cam, lights, x_max, y_max);
     //world = simple_spotlight_scene(cam, lights, x_max, y_max);
     //world = simple_mirror_scene(cam, lights, x_max, y_max);
     //world = simple_glass_scene(cam, lights, x_max, y_max);
@@ -108,8 +109,8 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
             Color col = Color(0.0f,0.0f,0.0f);
             for (int s = 0; s < samples; s++)
             {
-                float ur = drand48();
-                float vr = drand48();
+                float ur = xorandf();
+                float vr = xorandf();
                 float u = float(i + ur)/float(x_max);
                 float v = float(j + vr)/float(y_max);
                 // std::cout << "u " << u << "\n";
@@ -148,6 +149,7 @@ int main()
     std::cout << "image_h: " << image_h << '\n';
     std::cout << "samples: " << samples << '\n';
     std::cout << "Raytracing Start!" << '\n';
+    xorseed();
 
     start = std::clock();
 

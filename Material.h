@@ -7,12 +7,13 @@ struct Intersection;
 #include "Texture.h"
 #include "Ray.h"
 #include "Intersection.h"
+#include "RNG.h"
 
 Vec3 random_in_unit_sphere()
 {
     Vec3 p;
     do {
-        p = 2.0*Vec3(drand48(), drand48(), drand48())-Vec3(1.0f,1.0f,1.0f);
+        p = 2.0*Vec3(xorandf(), xorandf(), xorandf())-Vec3(1.0f,1.0f,1.0f);
     } while(p.squared_length() >= 1.0);
     return p;
 }
@@ -123,7 +124,7 @@ public:
         {
             reflect_prob = 1.0f;
         }
-        if (drand48() < reflect_prob)
+        if (xorandf() < reflect_prob)
         {
             scattered = Ray(isect.p, reflected, r_in.t());
         }
