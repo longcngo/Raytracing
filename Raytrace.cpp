@@ -39,7 +39,7 @@ Color direct_lighting(const Ray& r, Intersectable *world, LightList *lights)
 {
     Intersection isect;
     Color radience;
-    if (world->intersect(r, 0.0001f, FLT_MAX, isect) && !(isect.mat->isReflective))
+    if (world->intersect(r, 0.0001f, FLT_MAX, isect))
     {
         Intersection isect_shadow;
         LightSample ls;
@@ -98,11 +98,13 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
 
     //world = simple_sphere_scene(cam, lights, x_max, y_max);
     //world = simple_texture_scene(cam, lights, x_max, y_max);
+    //world = simple_perlin_scene(cam, lights, x_max, y_max);
+    world = simple_turb_scene(cam, lights, x_max, y_max);
     //world = simple_spotlight_scene(cam, lights, x_max, y_max);
     //world = simple_mirror_scene(cam, lights, x_max, y_max);
     //world = simple_glass_scene(cam, lights, x_max, y_max);
     //world = simple_emitter_scene(cam, lights, x_max, y_max);
-    world = random_scene(cam, lights, x_max, y_max);
+    //world = random_scene(cam, lights, x_max, y_max);
 
     for (int j = y_max-1; j >= 0; j--) {
         for (int i = 0; i < x_max; i++) {
@@ -139,9 +141,9 @@ int main()
     double duration;
 
     ofstream outfile;
-    outfile.open("output/raytrace_37.ppm", ios::out | ios::trunc);
-    int image_w = 500;
-    int image_h = 500;
+    outfile.open("output/raytrace_49.ppm", ios::out | ios::trunc);
+    int image_w = 300;
+    int image_h = 300;
     int samples = 100;
 
     std::cout << "Settings" << '\n';

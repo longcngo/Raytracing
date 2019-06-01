@@ -1,13 +1,11 @@
 #ifndef MATERIALH
 #define MATERIALH
 
-struct Intersection;
-
-#include "Color.h"
 #include "Texture.h"
 #include "Ray.h"
 #include "Intersection.h"
-#include "RNG.h"
+
+struct Intersection;
 
 Vec3 random_in_unit_sphere()
 {

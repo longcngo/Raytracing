@@ -70,7 +70,16 @@ public:
 
     inline Color& sqrt() { r = pow(r, 0.5f); g = pow(g, 0.5f); b = pow(b, 0.5f); return *this; }
     inline Color& to_int() { r = int(r); g = int(g); b = int(b); return *this; }
-    inline void clamp();
+    inline Color& clamp()
+    {
+        if (r < 0.0f) { r = 0.0f; }
+        if (g < 0.0f) { g = 0.0f; }
+        if (b < 0.0f) { b = 0.0f; }
+        if (r > 1.0f) { r = 1.0f; }
+        if (g > 1.0f) { g = 1.0f; }
+        if (b > 1.0f) { b = 1.0f; }
+        return *this;
+    }
 
 };
 
@@ -94,16 +103,6 @@ inline Color operator*(float t, const Color &c)
 inline Color operator*(const Color &c, float t)
 {
     return t*c;
-}
-
-inline void Color::clamp()
-{
-    if (r < 0.0f) { r = 0.0f; }
-    if (g < 0.0f) { g = 0.0f; }
-    if (b < 0.0f) { b = 0.0f; }
-    if (r > 1.0f) { r = 1.0f; }
-    if (g > 1.0f) { g = 1.0f; }
-    if (b > 1.0f) { b = 1.0f; }
 }
 
 inline Color lerp(const Color& c1, const Color& c2, float t)
