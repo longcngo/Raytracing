@@ -1,7 +1,9 @@
 #ifndef SCENESH
 #define SCENESH
+#define STB_IMAGE_IMPLEMENTATION
 
 #include <cfloat>
+#include "stb_image.h"
 #include "Shapes.h"
 #include "Camera.h"
 #include "Material.h"
@@ -94,6 +96,51 @@ Intersectable *simple_turb_scene(Camera& cam, LightList& lights, float x_max, fl
     list[3] = new Sphere(Vec3(-1.25f, 0.0f, -1.25f), 1.25f, new Lambertian(pertext));
 
     return new IntersectList(list, 4);
+}
+
+Intersectable *simple_img_test_scene(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+    Vec3 lookfrom = Vec3(5.0f, 4.0f, 5.0f);
+    Vec3 lookat = Vec3(0.0f,1.0f,0.0f);
+    Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+    float dist_to_focus = 10.0f;
+    float aperature = 0.1f;
+    cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+    Light ** l_list = new Light*[1];
+    l_list[0] = new PointLight(Vec3(10.0f, 10.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+    lights = LightList(l_list , 1);
+
+    Intersectable **list = new Intersectable*[2];
+    int nx, ny, nn;
+    unsigned char *tex_data = stbi_load("input/textures/colorgrid.png", &nx, &ny, &nn, 0);
+    Material *earth_mat = new Lambertian(new ImageTexture(tex_data, nx, ny));
+    list[0] = new Sphere(Vec3(0.0f,-1000.0f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
+    list[1] = new Sphere(Vec3(0.0f,1.0f,0.0f), 1.0f, earth_mat);
+
+    return new IntersectList(list, 2);
+}
+
+Intersectable *simple_earth_scene(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+    Vec3 lookfrom = Vec3(5.0f, 4.0f, 5.0f);
+    Vec3 lookat = Vec3(0.0f,1.0f,0.0f);
+    Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+    float dist_to_focus = 10.0f;
+    float aperature = 0.1f;
+    cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+    Light ** l_list = new Light*[1];
+    //l_list[0] = new PointLight(Vec3(10.0f, 10.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+    lights = LightList(l_list , 0);
+
+    Intersectable **list = new Intersectable*[1];
+    int nx, ny, nn;
+    unsigned char *tex_data = stbi_load("input/textures/earthmap.jpg", &nx, &ny, &nn, 0);
+    Material *earth_mat = new Lambertian(new ImageTexture(tex_data, nx, ny));
+    list[0] = new Sphere(Vec3(0.0f,1.0f,0.0f), 1.0f, earth_mat);
+
+    return new IntersectList(list, 1);
 }
 
 Intersectable *simple_spotlight_scene(Camera& cam, LightList& lights, float x_max, float y_max)

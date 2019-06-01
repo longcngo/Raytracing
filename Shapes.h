@@ -5,6 +5,14 @@
 
 class Material;
 
+void get_sphere_uv(const Vec3& p, Vec2& uv)
+{
+    float theta = asin(p.y);
+    float phi = atan2(p.z, p.x);
+    uv.x = 1-((phi + M_PI)/(2*M_PI));
+    uv.y = (0.5f*M_PI+theta)/(M_PI);
+}
+
 class Sphere : public Intersectable
 {
 public:
@@ -39,6 +47,9 @@ public:
                 isect.p = r.point_at(isect.t);
                 isect.normal = (isect.p - center);
                 isect.normal.normalize();
+                Vec2 uv_temp;
+                get_sphere_uv((isect.p-center)/radius, uv_temp);
+                isect.uv = uv_temp;
                 isect.mat = mat_ptr;
                 return true;
             }
@@ -104,8 +115,12 @@ public:
                 // std::cout << center(r.t()) << '\n' << '\n';
                 isect.t = t_temp;
                 isect.p = r.point_at(isect.t);
-                isect.normal = (isect.p - center(r.t()));
+                Vec3 cen = center(r.t());
+                isect.normal = (isect.p - cen);
                 isect.normal.normalize();
+                Vec2 uv_temp;
+                get_sphere_uv((isect.p-cen)/radius, uv_temp);
+                isect.uv = uv_temp;
                 isect.mat = mat_ptr;
                 return true;
             }
@@ -126,6 +141,10 @@ public:
 
 };
 
+void get_triangle_uv(const Vec3& p, Vec2& uv)
+{
+
+}
 
 class Triangle : public Intersectable
 {
@@ -202,6 +221,9 @@ class Triangle : public Intersectable
             isect.normal += (n1*beta);
             isect.normal += (n2*gamma);
             isect.normal.normalize();
+            Vec2 uv_temp;
+            //get_triangle_uv((isect.p-center)/radius, uv_temp)
+            isect.uv = uv_temp;
             isect.mat = mat_ptr;
             return true;
         }

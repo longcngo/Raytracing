@@ -7,7 +7,7 @@ using namespace std;
 
 Color background(const Ray& r)
 {
-    //return Color(0.1,0.1,0.1);
+    //return Color(0.5,0.5,0.8);
     float t = 0.5*(unit_vector(r.d()).y + 1.0f);
     return (1.0f-t)*Color(1.0f,1.0f,1.0f) + t*Color(0.5f,0.7f,1.0f);
 }
@@ -99,7 +99,9 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
     //world = simple_sphere_scene(cam, lights, x_max, y_max);
     //world = simple_texture_scene(cam, lights, x_max, y_max);
     //world = simple_perlin_scene(cam, lights, x_max, y_max);
-    world = simple_turb_scene(cam, lights, x_max, y_max);
+    //world = simple_turb_scene(cam, lights, x_max, y_max);
+    world = simple_earth_scene(cam, lights, x_max, y_max);
+    //world = simple_img_test_scene(cam, lights, x_max, y_max);
     //world = simple_spotlight_scene(cam, lights, x_max, y_max);
     //world = simple_mirror_scene(cam, lights, x_max, y_max);
     //world = simple_glass_scene(cam, lights, x_max, y_max);
@@ -124,6 +126,7 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
                 col += direct_lighting(r, world, &lights);
             }
             col /= float(samples);
+            col.clamp();
             col.sqrt();
             col *= 255.99f;
             col.to_int();
@@ -141,9 +144,9 @@ int main()
     double duration;
 
     ofstream outfile;
-    outfile.open("output/raytrace_49.ppm", ios::out | ios::trunc);
-    int image_w = 300;
-    int image_h = 300;
+    outfile.open("output/raytrace_51.ppm", ios::out | ios::trunc);
+    int image_w = 800;
+    int image_h = 800;
     int samples = 100;
 
     std::cout << "Settings" << '\n';

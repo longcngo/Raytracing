@@ -3,6 +3,7 @@
 #define INTERSECTIONH
 
 #include "BoundingBox.h"
+#include "Vec2.h"
 
 class Material;
 
@@ -11,6 +12,7 @@ struct Intersection
     float t;
     Vec3 p;
     Vec3 normal;
+    Vec2 uv;
     Material *mat;
 };
 

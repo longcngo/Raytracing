@@ -126,4 +126,51 @@ public:
     }
 };
 
+class ImageTexture : public Texture
+{
+public:
+    unsigned char *data;
+    int nx, ny;
+
+    ImageTexture(){}
+    ImageTexture(unsigned char *pixels, int na, int nb)
+    { data = pixels; nx = na; ny = nb; }
+    virtual Color value(const Vec2& uv, const Vec3& p) const
+    {
+        int i = int(nx*uv.x);
+        int j = int(ny*(1-uv.y));
+        i = i < 0 ? 0 : i;
+        j = j < 0 ? 0 : j;
+        i = i > nx-1 ? nx-1 : i;
+        j = j > ny-1 ? ny-1 : j;
+
+        Color c0 = Color(data[3*i+3*nx*j],
+                         data[3*i+3*nx*j+1],
+                         data[3*i+3*nx*j+2])/256.0f;
+
+        // Color c1 = Color(data[3*(i+1)+3*nx*j],
+        //                  data[3*(i+1)+3*nx*j+1],
+        //                  data[3*(i+1)+3*nx*j+2])/256.0f;
+        //
+        // Color c2 = Color(data[3*i+3*nx*(j+1)],
+        //                  data[3*i+3*nx*(j+1)+1],
+        //                  data[3*i+3*nx*(j+1)+2])/256.0f;
+        //
+        // Color c3 = Color(data[3*(i+1)+3*nx*(j+1)],
+        //                  data[3*(i+1)+3*nx*(j+1)+1],
+        //                  data[3*(i+1)+3*nx*(j+1)+2])/256.0f;
+        //
+        // float u1 = nx*uv.x - floor(nx*uv.x);
+        // float v1 = ny*uv.y - floor(ny*uv.y);
+        // float u2 = (-2*u1+3)*u1*u1;
+        // float v2 = (-2*v1+3)*v1*v1;
+        //
+        // Color r = (1-u2)*(1-v2)*c0 +
+        //        (u2)*(1-v2)*c1 +
+        //        (1-u2)*(v2)*c2 +
+        //        (u2)*(v2)*c3;
+        return c0;
+    }
+};
+
 #endif

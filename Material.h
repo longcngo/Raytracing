@@ -1,7 +1,7 @@
 #ifndef MATERIALH
 #define MATERIALH
 
-#include "Texture.h"
+#include "Textures.h"
 #include "Ray.h"
 #include "Intersection.h"
 
@@ -62,7 +62,7 @@ public:
     {
         Vec3 target = isect.p + isect.normal + random_in_unit_sphere();
         scattered = Ray(isect.p, target-isect.p, r_in.t());
-        attenuation = albedo->value(Vec2(0.0f,0.0f), isect.p);
+        attenuation = albedo->value(isect.uv, isect.p);
         return true;
     }
 
@@ -80,7 +80,7 @@ public:
     {
         Vec3 reflected = reflect(r_in.dir, isect.normal);
         scattered = Ray(isect.p, reflected + fuzz*random_in_unit_sphere(), r_in.t());
-        attenuation = albedo->value(Vec2(0.0f,0.0f), isect.p);
+        attenuation = albedo->value(isect.uv, isect.p);
         return (dot(scattered.dir, isect.normal) > 0);
     }
 
