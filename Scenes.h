@@ -4,7 +4,9 @@
 
 #include <cfloat>
 #include "stb_image.h"
-#include "Shapes.h"
+#include "Sphere.h"
+#include "Triangle.h"
+#include "Parallelogram.h"
 #include "Camera.h"
 #include "Material.h"
 #include "IntersectList.h"
@@ -27,6 +29,27 @@ Intersectable *simple_sphere_scene(Camera& cam, LightList& lights, float x_max, 
     Intersectable **list = new Intersectable*[2];
     list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
     list[1] = new Sphere(Vec3(-0.25f, 0.0f, 0.25f), 1.25f, new Lambertian(new ConstantTexture(Color(1.0f, 0.2f, 0.2f))));
+
+    return new IntersectList(list, 2);
+}
+
+Intersectable *simple_rect_scene(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+    Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
+    Vec3 lookat = Vec3(-0.15f,0.0f,0.5f);
+    Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+    float dist_to_focus = 10.0f;
+    float aperature = 0.1f;
+    cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+    Light ** l_list = new Light*[1];
+    l_list[0] = new PointLight(Vec3(10.0f, 10.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+    lights = LightList(l_list , 1);
+
+    Intersectable **list = new Intersectable*[2];
+    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
+    list[1] = new Parallelogram(Vec3(-0.25f, 0.0f, 0.25f), Vec3(0.0f,1.0f,1.25f), Vec3(-1.25f,0.0f,0.0f),
+                                new DiffuseEmitter(new ConstantTexture(Color(1.0f,1.0f,1.0f))));
 
     return new IntersectList(list, 2);
 }
@@ -200,6 +223,27 @@ Intersectable *simple_glass_scene(Camera& cam, LightList& lights, float x_max, f
     list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
     list[1] = new Sphere(Vec3(-1.25f, 0.0f, 1.25f), 1.25f, new Lambertian(new ConstantTexture(Color(1.0f, 0.2f, 0.2f))));
     list[2] = new Sphere(Vec3(1.25f,0.0f,-1.25f), 1.25f, new Dielectric(1.5f));
+    return new IntersectList(list, 3);
+}
+
+Intersectable *simple_emitter_scene1(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+    Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
+    Vec3 lookat = Vec3(0.25f,0.0f,0.5f);
+    Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+    float dist_to_focus = 10.0f;
+    float aperature = 0.1f;
+    cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+    Light ** l_list = new Light*[1];
+    //SphereLight *spl = new SphereLight(Vec3(1.25f, 0.0f, -1.25f), 1.25f, Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+    //l_list[0] = spl;
+    lights = LightList(l_list , 0);
+
+    Intersectable **list = new Intersectable*[3];
+    list[0] = new Sphere(Vec3(1.25f, 0.0f, -1.25f), 1.25f, new DiffuseEmitter(new ConstantTexture(Color(1.0f,1.0f,1.0f))));
+    list[1] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
+    list[2] = new Sphere(Vec3(-1.25f, 0.0f, 1.25f), 1.25f, new Lambertian(new ConstantTexture(Color(1.0f,0.2f,0.2f))));
     return new IntersectList(list, 3);
 }
 
