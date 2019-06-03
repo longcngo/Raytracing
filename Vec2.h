@@ -171,6 +171,20 @@ inline Vec2& Vec2::operator/=(float t)
     return *this;
 }
 
+inline bool operator==(const Vec2 &v1, const Vec2 &v2)
+{
+    if (v1.x != v2.x) { return false; }
+    if (v1.y != v2.y) { return false; }
+    return true;
+}
+
+inline bool operator!=(const Vec2 &v1, const Vec2 &v2)
+{
+    if (v1.x == v2.x) { return false; }
+    if (v1.y == v2.y) { return false; }
+    return true;
+}
+
 inline Vec2 unit_vector(Vec2 v)
 {
     return v/v.length();

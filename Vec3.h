@@ -190,6 +190,22 @@ inline Vec3& Vec3::operator/=(float t)
     return *this;
 }
 
+inline bool operator==(const Vec3 &v1, const Vec3 &v2)
+{
+    if (v1.x != v2.x) { return false; }
+    if (v1.y != v2.y) { return false; }
+    if (v1.z != v2.z) { return false; }
+    return true;
+}
+
+inline bool operator!=(const Vec3 &v1, const Vec3 &v2)
+{
+    if (v1.x == v2.x) { return false; }
+    if (v1.y == v2.y) { return false; }
+    if (v1.z == v2.z) { return false; }
+    return true;
+}
+
 inline Vec3 unit_vector(Vec3 v)
 {
     return v/v.length();
