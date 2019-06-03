@@ -60,6 +60,36 @@ public:
         }
     }
 
+    virtual bool get_sample_point(const Vec3& init_point, Vec3& sample_point, Vec3& sample_dir) const
+    {
+        Vec3 dir_to_center = center-init_point;
+        if (dir_to_center.length() < radius) { return false; }
+        float dist_to_center_2 = (radius*radius)/(dir_to_center.squared_length());
+        float cos_theta_max = sqrt(1-(dist_to_center_2));
+        float r0 = xorandf();
+        float r1 = xorandf();
+        float phi = 2*M_PI*r0;
+        float cos_theta = 1 + r1*(cos_theta_max-1);
+        float sin_theta = sqrt(1-(cos_theta*cos_theta));
+        Vec3 sphere_point = Vec3(cos(phi)*sin_theta, sin(phi)*sin_theta, cos_theta);
+
+        ONB onb;
+        onb.initW(dir_to_center);
+        Ray to_light = Ray(init_point, onb.local(sphere_point), 0.0f);
+
+        Intersection light_isect;
+        if (this->intersect(to_light, 0.0001f, FLT_MAX, light_isect))
+        {
+            sample_point = light_isect.p;
+            sample_dir = unit_vector(sample_point-init_point);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     virtual bool bounding_box(float t0, float t1, bbox& box) const
     {
         box = bbox(center - Vec3(radius, radius, radius), center + Vec3(radius, radius, radius));
@@ -83,7 +113,6 @@ public:
     { center0 = cen0; center1 = cen1; time0 = t0; time1 = t1; radius = r; mat_ptr = m;}
     Vec3 center(float t) const
     {
-        //std::cout << center0 + ((t-time0)/(time1-time0))*(center1-center0) << '\n';
         return center0 + ((t-time0)/(time1-time0))*(center1-center0);
     }
     virtual bool intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const
@@ -124,6 +153,36 @@ public:
                 isect.mat = mat_ptr;
                 return true;
             }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    virtual bool get_sample_point(const Vec3& init_point, Vec3& sample_point, Vec3& sample_dir) const
+    {
+        Vec3 dir_to_center = center(time0+xorandf()*(time1-time0))-init_point;
+        if (dir_to_center.length() < radius) { return false; }
+        float dist_to_center_2 = (radius*radius)/(dir_to_center.squared_length());
+        float cos_theta_max = sqrt(1-(dist_to_center_2));
+        float r0 = xorandf();
+        float r1 = xorandf();
+        float phi = 2*M_PI*r0;
+        float cos_theta = 1 + r1*(cos_theta_max-1);
+        float sin_theta = sqrt(1-(cos_theta*cos_theta));
+        Vec3 sphere_point = Vec3(cos(phi)*sin_theta, sin(phi)*sin_theta, cos_theta);
+
+        ONB onb;
+        onb.initW(dir_to_center);
+        Ray to_light = Ray(init_point, unit_vector(onb.local(sphere_point)));
+
+        Intersection light_isect;
+        if (this->intersect(to_light, 0.0001f, FLT_MAX, light_isect))
+        {
+            sample_point = light_isect.p;
+            sample_dir = unit_vector(sample_point-init_point);
+            return true;
         }
         else
         {

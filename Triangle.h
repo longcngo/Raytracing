@@ -94,6 +94,16 @@ class Triangle : public Intersectable
 
     }
 
+    virtual bool get_sample_point(const Vec3& init_point, Vec3& sample_point, Vec3& sample_dir) const
+    {
+        float r0 = xorandf();
+        float r1 = sqrt(xorandf());
+        Vec3 q = (1-r0)*p0 + r0*p1;
+        sample_point = (1-r1)*q + r1*p2;
+        sample_dir = sample_point - init_point;
+        return true;
+    }
+
     virtual bool bounding_box(float t0, float t1, bbox& box) const
     {
         Vec3 small = Vec3(ffmin(ffmin(p0.x, p1.x), p2.x),

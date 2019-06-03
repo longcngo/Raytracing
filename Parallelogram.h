@@ -67,6 +67,13 @@ public:
 
     }
 
+    virtual bool get_sample_point(const Vec3& init_point, Vec3& sample_point, Vec3& sample_dir) const
+    {
+        sample_point = base + xorandf()*v0 + xorandf()*v1;
+        sample_dir = sample_point-init_point;
+        return true;
+    }
+
     virtual bool bounding_box(float t0, float t1, bbox& box) const
     {
         Vec3 p0 = base;
