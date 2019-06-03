@@ -48,8 +48,11 @@ class Material
 {
 public:
     bool isReflective;
+    bool isEmissive;
 
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const = 0;
+    virtual bool illuminated(const Intersection& isect, Color& attenuation) const { return false; }
+    virtual Color emitted(const Vec2& uv, const Vec3& p) const { return Color(); }
 };
 
 class Lambertian : public Material
@@ -57,7 +60,7 @@ class Lambertian : public Material
 public:
     Texture *albedo;
 
-    Lambertian(Texture* a) { albedo = a; isReflective = false; }
+    Lambertian(Texture* a) { albedo = a; isReflective = false; isEmissive = false; }
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const
     {
         Vec3 target = isect.p + isect.normal + random_in_unit_sphere();
@@ -65,6 +68,24 @@ public:
         attenuation = albedo->value(isect.uv, isect.p);
         return true;
     }
+    virtual bool illuminated(const Intersection& isect, Color& attenuation) const
+    {
+        attenuation = (albedo->value(isect.uv, isect.p))/M_PI;
+        return true;
+    }
+
+};
+
+class DiffuseEmitter : public Material
+{
+public:
+    Texture *emit;
+
+    DiffuseEmitter(Texture* e) { emit = e; isReflective = false; isEmissive = true; }
+    virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const
+    { return false; }
+    virtual Color emitted(const Vec2& uv, const Vec3& p) const
+    { return emit->value(uv, p); }
 
 };
 
@@ -74,7 +95,7 @@ public:
     Texture *albedo;
     float fuzz;
 
-    Metal(Texture* a, float f) { albedo = a; isReflective = true;
+    Metal(Texture* a, float f) { albedo = a; isReflective = true; isEmissive = false;
          if (f > 1.0f) { fuzz = 1.0f;} else { fuzz = f; } }
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const
     {
@@ -91,7 +112,7 @@ class Dielectric : public Material
 public:
     float ref_idx;
 
-    Dielectric(float ri) { ref_idx = ri; isReflective = true; }
+    Dielectric(float ri) { ref_idx = ri; isReflective = true; isEmissive = false; }
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const
     {
         Vec3 outward_normal;
