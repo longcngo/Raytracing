@@ -7,65 +7,82 @@ using namespace std;
 
 Color background(const Ray& r)
 {
-    //return Color(0.5,0.5,0.8);
-    float t = 0.5*(unit_vector(r.d()).y + 1.0f);
-    return (1.0f-t)*Color(1.0f,1.0f,1.0f) + t*Color(0.5f,0.7f,1.0f);
+    return Color(0.0,0.0,0.0);
+    //float t = 0.5*(unit_vector(r.d()).y + 1.0f);
+    //return (1.0f-t)*Color(1.0f,1.0f,1.0f) + t*Color(0.5f,0.7f,1.0f);
 }
 
-Color indirect_lighting(const Ray& r, Intersectable *world, int depth)
+Color direct_lighting(const Intersection& isect, const Ray& r, Intersectable *world, LightList *lights)
 {
-    Intersection isect;
-    if (world->intersect(r, 0.0001f, FLT_MAX, isect)){
-        Ray scattered;
-        Color attenuation;
-        if (depth < 50 && isect.mat->scatter(r, isect, attenuation, scattered))
+    Color radiance = Color();
+    Intersection isect_shadow;
+    LightSample ls;
+    Color attenuation;
+    int num_lights = lights->list_size;
+
+    for (int i = 0; i < num_lights; i++)
+    {
+        if (lights->light_list[i]->get_light(isect.p, ls))
         {
-            depth += 1;
-            Color new_attenuation = indirect_lighting(scattered, world, depth);
-            return attenuation*new_attenuation;
+            //std::cout << ls.p << '\n';
+            float light_dist = (ls.p-isect.p).squared_length();
+            Ray shadow = Ray(isect.p, ls.dir , r.t());
+            if (!(world->intersect(shadow, 0.0001f, FLT_MAX, isect_shadow)) ||
+                (light_dist < isect_shadow.t) ||
+                (isect_shadow.mat->emitted(isect_shadow.uv, isect_shadow.p) != Color()))
+            {
+                isect.mat->illuminated(isect, radiance);
+                //std::cout << radiance << '\n';
+                float ndotl = dot(isect.normal, ls.dir);
+                if (ndotl > 0.0f) {
+                    attenuation *= ls.c;
+                    radiance += attenuation;
+                }
+                //std::cout << radiance << '\n';
+            }
+        }
+    }
+
+    return radiance;
+}
+
+Color indirect_lighting(Intersection& isect, const Ray& r, Intersectable *world, int depth)
+{
+    Ray scattered;
+    Color attenuation;
+
+    if (world->intersect(r, 0.0001f, FLT_MAX, isect))
+    {
+        Color emitted = isect.mat->emitted(isect.uv, isect.p);
+        bool didScatter = isect.mat->scatter(r, isect, attenuation, scattered);
+        if (depth < 50 && didScatter)
+        {
+            return emitted + attenuation*indirect_lighting(isect, scattered, world, ++depth);
         }
         else
         {
-            return Color(0.0f,0.0f,0.0f);
+            return emitted;
         }
     }
     else
     {
         return background(r);
     }
+
 }
 
-Color direct_lighting(const Ray& r, Intersectable *world, LightList *lights)
+
+Color raytrace(const Ray& r, Intersectable *world, LightList *lights)
 {
     Intersection isect;
-    Color radience;
+    Color radiance = Color();
+
     if (world->intersect(r, 0.0001f, FLT_MAX, isect))
     {
-        Intersection isect_shadow;
-        LightSample ls;
-        Ray scattered;
-        Color attenuation;
-        int num_lights = lights->list_size;
-        for (int i = 0; i < num_lights; i++) {
-            if (lights->light_list[i]->get_light(isect.p, ls))
-            {
-                float light_dist = (ls.p-isect.p).squared_length();
-                Ray shadow = Ray(isect.p + Vec3(0.01f,0.01f,0.01f), ls.dir , r.t());
-                if (!(world->intersect(shadow, 0.0001f, FLT_MAX, isect_shadow))
-                || (light_dist <= isect_shadow.t))
-                {
-                    //std::cout << ls.c << '\n';
-                    isect.mat->scatter(r, isect, attenuation, scattered);
-                    float ndotl = dot(isect.normal, ls.dir);
-                    if (ndotl > 0.0f) {
-                        attenuation *= ls.c;
-                        radience += attenuation;
-                    }
-                    //std::cout << radience << '\n';
-                }
-            }
-        }
-        return radience;
+        radiance = isect.mat->emitted(isect.uv, isect.p);
+        radiance += direct_lighting(isect, r, world, lights);
+        radiance += indirect_lighting(isect, r, world, 0);
+        return radiance;
     }
     else
     {
@@ -78,34 +95,23 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
 {
     os << "P3\n" << x_max << " " << y_max << "\n255\n";
 
-    // Intersectable *list[5];
-    // list[0] = new Sphere(Vec3(0.0f,0.0f,-1.0f), 0.5f, new Lambertian(Color(0.1f,0.2f,0.5f)));
-    // list[1] = new Sphere(Vec3(0.0f,-100.5f,-1.0f), 100.0f, new Lambertian(Color(0.8f,0.8f,0.0f)));
-    // list[2] = new Sphere(Vec3(1.0f,0.0f,-1.0f), 0.5f, new Metal(Color(0.8f,0.6f,0.2f), 0.3f));
-    // list[3] = new Sphere(Vec3(-1.0f,0.0f,-1.0f), 0.5f, new Dielectric(1.5f));
-    // list[4] = new Sphere(Vec3(-1.0f,0.0f,-1.0f), -0.45f, new Dielectric(1.5f));
-    // Intersectable *world = new IntersectList(list, 5);
-
-    // float R = cos(M_PI/4);
-    // Intersectable *list[2];
-    // list[0] = new Sphere(Vec3(-R,0.0f,-1.0f), R, new Lambertian(Color(1.0f,0.2f,0.0f)));
-    // list[1] = new Sphere(Vec3(R,0.0f,-1.0f), R, new Lambertian(Color(0.0f,0.2f,1.0f)));
-    // Intersectable *world = new IntersectList(list, 2);
-
     Camera cam = Camera(float(x_max)/float(y_max));
     LightList lights;
     Intersectable *world;
 
     //world = simple_sphere_scene(cam, lights, x_max, y_max);
+    //world = simple_rect_scene(cam, lights, x_max, y_max);
     //world = simple_texture_scene(cam, lights, x_max, y_max);
     //world = simple_perlin_scene(cam, lights, x_max, y_max);
     //world = simple_turb_scene(cam, lights, x_max, y_max);
-    world = simple_earth_scene(cam, lights, x_max, y_max);
+    //world = simple_earth_scene(cam, lights, x_max, y_max);
     //world = simple_img_test_scene(cam, lights, x_max, y_max);
     //world = simple_spotlight_scene(cam, lights, x_max, y_max);
     //world = simple_mirror_scene(cam, lights, x_max, y_max);
     //world = simple_glass_scene(cam, lights, x_max, y_max);
-    //world = simple_emitter_scene(cam, lights, x_max, y_max);
+    world = simple_emitter_scene1(cam, lights, x_max, y_max);
+    //world = simple_emitter_scene2(cam, lights, x_max, y_max);
+    //world = three_sphere_scene(cam, lights, x_max, y_max);
     //world = random_scene(cam, lights, x_max, y_max);
 
     for (int j = y_max-1; j >= 0; j--) {
@@ -122,8 +128,7 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
                 // std::cout << "ur " << ur << "\n";
                 // std::cout << "vr " << vr << "\n";
                 Ray r = cam.get_ray(u,v);
-                col += indirect_lighting(r, world, 0);
-                col += direct_lighting(r, world, &lights);
+                col += raytrace(r, world, &lights);
             }
             col /= float(samples);
             col.clamp();
@@ -144,9 +149,9 @@ int main()
     double duration;
 
     ofstream outfile;
-    outfile.open("output/raytrace_51.ppm", ios::out | ios::trunc);
-    int image_w = 800;
-    int image_h = 800;
+    outfile.open("output/raytrace_58.ppm", ios::out | ios::trunc);
+    int image_w = 300;
+    int image_h = 300;
     int samples = 100;
 
     std::cout << "Settings" << '\n';
