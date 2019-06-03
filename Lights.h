@@ -1,7 +1,8 @@
 #ifndef LIGHTH
 #define LIGHTH
 
-#include "Shapes.h"
+#include "Color.h"
+#include "Intersection.h"
 
 struct LightSample
 {
@@ -13,8 +14,8 @@ struct LightSample
 class Light
 {
 public:
-    Color intensity;
     Color light_color;
+    Color intensity;
     virtual bool get_light(const Vec3& point, LightSample& ls) const = 0;
 };
 
@@ -79,17 +80,29 @@ public:
     }
 };
 
-// class AreaLight : public Light
-// {
-//   public:
-//     Intersectable *shape;
-//
-//     virtual bool get_light(const Vec3& point, LightSample& ls) const = 0;
-// };
-//
-// class SphereLight : public AreaLight
-// {
-//
-// };
+class AreaLight : public Light
+{
+  public:
+    Intersectable *shape;
+
+    AreaLight(){}
+    AreaLight(Intersectable *s, const Color& c, const Color& is)
+    { shape = s; light_color = c; intensity = is; }
+    virtual bool get_light(const Vec3& point, LightSample& ls) const
+    {
+        Vec3 sample_point;
+        Vec3 sample_dir;
+        if (!shape->get_sample_point(point, sample_point, sample_dir))
+        {
+            return false;
+        }
+        ls.p = sample_point;
+        ls.dir = sample_dir;
+        ls.dir.normalize();
+        ls.c = intensity*light_color;
+        return true;
+    }
+
+};
 
 #endif

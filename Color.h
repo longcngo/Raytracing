@@ -105,6 +105,21 @@ inline Color operator*(const Color &c, float t)
     return t*c;
 }
 
+inline bool operator==(const Color& c1, const Color& c2)
+{
+    if (c1.r != c2.r) { return false; }
+    if (c1.g != c2.g) { return false; }
+    if (c1.b != c2.b) { return false; }
+    return true;
+}
+inline bool operator!=(const Color& c1, const Color& c2)
+{
+    if (c1.r == c2.r) { return false; }
+    if (c1.g == c2.g) { return false; }
+    if (c1.b == c2.b) { return false; }
+    return true;
+}
+
 inline Color lerp(const Color& c1, const Color& c2, float t)
 {
     return (1.0f-t)*c1 + t*c2;
