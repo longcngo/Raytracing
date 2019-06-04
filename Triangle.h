@@ -1,19 +1,18 @@
 #ifndef TRIANGLEH
 #define TRIANGLEH
 
+#define PARALLEL_EPSILON 0.0000001f
+
 #include "Intersection.h"
 
 class Material;
 
-void get_triangle_uv(const Vec3& p, Vec2& uv)
-{
-
-}
-
 class Triangle : public Intersectable
 {
+public:
     Vec3 p0, p1, p2;
     Vec3 n0, n1, n2;
+    Vec2 uv0, uv1, uv2;
     Material *mat_ptr;
 
     Triangle() {}
@@ -23,53 +22,54 @@ class Triangle : public Intersectable
         Vec3 e1 = p1-p0; Vec3 e2 = p2-p0;
         Vec3 n = unit_vector(cross(e1,e2));
         Vec3 n0 = n; Vec3 n1 = n; Vec3 n2 = n;
+        Vec2 uv0 = Vec2(0.0f,0.0f); Vec2 uv1 = Vec2(0.0f,1.0f); Vec2 uv2 = Vec2(1.0f,0.0f);
     }
     Triangle(Vec3 a, Vec3 b, Vec3 c, Vec3 d, Vec3 e, Vec3 f, Material *m)
-    { p0 = a; p1 = b; p2 = c; n0 = d; n1 = e; n2 = f; mat_ptr = m; }
+    {
+        p0 = a; p1 = b; p2 = c;
+        n0 = d; n1 = e; n2 = f;
+        Vec2 uv0 = Vec2(0.0f,0.0f); Vec2 uv1 = Vec2(0.0f,1.0f); Vec2 uv2 = Vec2(1.0f,0.0f);
+        mat_ptr = m;
+    }
+    Triangle(Vec3 a, Vec3 b, Vec3 c, Vec3 d, Vec3 e, Vec3 f, Vec2 g, Vec2 h, Vec2 i, Material *m)
+    {
+        p0 = a; p1 = b; p2 = c;
+        n0 = d; n1 = e; n2 = f;
+        uv0 = g; uv1 = h; uv2 = i;
+        mat_ptr = m;
+    }
     virtual bool intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const
     {
-        float a = p0.x - p1.x;
-        float b = p0.y - p1.y;
-        float c = p0.z - p1.z;
 
-        float d = p0.x - p2.x;
-        float e = p0.y - p2.y;
-        float f = p0.z - p2.z;
+        Vec3 e1 = p1-p0; Vec3 e2 = p2-p0;
+        Vec3 p = cross(r.d(), e2);
+        float denom = dot(p, e1);
 
-        float g = r.dir.x;
-        float h = r.dir.y;
-        float i = r.dir.z;
+        if (fabs(denom) < PARALLEL_EPSILON)
+        {
+            return false;
+        }
 
-        float j = p0.x - r.ori.x;
-        float k = p0.y - r.ori.y;
-        float l = p0.z - r.ori.z;
-
-        float ei_sub_hf = e*i-h*f;
-        float gf_sub_di = g*f-d*i;
-        float dh_sub_eg = d*h-e*g;
-
-        float denom = a*ei_sub_hf + b*gf_sub_di + c*dh_sub_eg;
         denom = 1/denom;
+        Vec3 e0 = r.o()-p0;
 
-        float beta = (j*ei_sub_hf + k*gf_sub_di + l*dh_sub_eg)*denom;
+        float beta = dot(p, e0)*denom;
 
-        if (beta < 0.0f || beta > 1.0f)
+        if (beta <= 0.0f || beta >= 1.0f)
         {
             return false;
         }
 
-        float ak_sub_jb = a*k-j*b;
-        float jc_sub_al = j*c-a*l;
-        float bl_sub_kc = b*l-k*c;
+        Vec3 q = cross(e0,e1);
 
-        float gamma = (i*ak_sub_jb* + h*jc_sub_al + g*bl_sub_kc)*denom;
+        float gamma = dot(q, r.d())*denom;
 
-        if (gamma < 0.0f || gamma + beta > 1.0f)
+        if (gamma <= 0.0f || gamma + beta >= 1.0f)
         {
             return false;
         }
 
-        float t = (f*ak_sub_jb + e*jc_sub_al + d*bl_sub_kc)*denom;
+        float t = dot(q, e2)*denom;
 
         if (t < t_min || t > t_max)
         {
@@ -80,14 +80,9 @@ class Triangle : public Intersectable
             isect.t = t;
             isect.p = r.point_at(isect.t);
             float alpha = 1 - beta - gamma;
-            isect.normal = n0;
-            isect.normal *= alpha;
-            isect.normal += (n1*beta);
-            isect.normal += (n2*gamma);
+            isect.normal = alpha*n0+beta*n1+gamma*n2;
             isect.normal.normalize();
-            Vec2 uv_temp;
-            //get_triangle_uv((isect.p-center)/radius, uv_temp)
-            isect.uv = uv_temp;
+            isect.uv = alpha*uv0+beta*uv1+gamma*uv2;
             isect.mat = mat_ptr;
             return true;
         }
