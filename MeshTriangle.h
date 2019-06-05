@@ -144,12 +144,12 @@ public:
         Vec3 p0 = mesh->verts[p[0]];
         Vec3 p1 = mesh->verts[p[1]];
         Vec3 p2 = mesh->verts[p[2]];
-        Vec3 small = Vec3(ffmin(ffmin(p0.x, p1.x), p2.x),
-        ffmin(ffmin(p0.y, p1.y), p2.y),
-        ffmin(ffmin(p0.z, p1.z), p2.z));
-        Vec3 large = Vec3(ffmax(ffmax(p0.x, p1.x), p2.x),
-        ffmax(ffmax(p0.y, p1.y), p2.y),
-        ffmax(ffmax(p0.z, p1.z), p2.z));
+        Vec3 small = Vec3(ffmin(ffmin(p0.x(), p1.x()), p2.x()),
+        ffmin(ffmin(p0.y(), p1.y()), p2.y()),
+        ffmin(ffmin(p0.z(), p1.z()), p2.z()));
+        Vec3 large = Vec3(ffmax(ffmax(p0.x(), p1.x()), p2.x()),
+        ffmax(ffmax(p0.y(), p1.y()), p2.y()),
+        ffmax(ffmax(p0.z(), p1.z()), p2.z()));
         box = bbox(small, large);
         return true;
     }

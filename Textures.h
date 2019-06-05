@@ -33,7 +33,7 @@ public:
     StripeTexture(Texture* t0, Texture* t1, float w){ texture0 = t0; texture1 = t1; width = 1/w; }
     virtual Color value(const Vec2& uv, const Vec3& p) const
     {
-        if (sin((M_PI*p.x)*width) > 0)
+        if (sin((M_PI*p.x())*width) > 0)
         {
             return texture0->value(uv, p);
         }
@@ -55,7 +55,7 @@ public:
     SmoothStripeTexture(Texture* t0, Texture* t1, float w){ texture0 = t0; texture1 = t1; width = 1/w; }
     virtual Color value(const Vec2& uv, const Vec3& p) const
     {
-        float t = 0.5f*width*(1+sin(M_PI*p.x));
+        float t = 0.5f*width*(1+sin(M_PI*p.x()));
         return lerp(texture0->value(uv, p), texture1->value(uv, p), t);
     }
 };
@@ -70,7 +70,7 @@ public:
     CheckerTexture(Texture* t0, Texture* t1){ texture0 = t0; texture1 = t1; }
     virtual Color value(const Vec2& uv, const Vec3& p) const
     {
-        float sines = (sin(10*p.x)*sin(10*p.y)*sin(10*p.z));
+        float sines = (sin(10*p.x())*sin(10*p.y())*sin(10*p.z()));
         if (sines > 0)
         {
             return texture0->value(uv, p);
@@ -121,7 +121,7 @@ public:
     { width = 1/w;  scale0 = k0; scale1 = k1; }
     virtual Color value(const Vec2& uv, const Vec3& p) const
     {
-        float t = 0.5f*(1+width*sin(scale0*p.x + scale1*noise.turbulance(p)));
+        float t = 0.5f*(1+width*sin(scale0*p.x() + scale1*noise.turbulance(p)));
         return lerp(Color(0,0,0), Color(1,1,1), t).clamp();
     }
 };
@@ -137,8 +137,8 @@ public:
     { data = pixels; nx = na; ny = nb; }
     virtual Color value(const Vec2& uv, const Vec3& p) const
     {
-        int i = int(nx*uv.x);
-        int j = int(ny*(1-uv.y));
+        int i = int(nx*uv.x());
+        int j = int(ny*(1-uv.y()));
         i = i < 0 ? 0 : i;
         j = j < 0 ? 0 : j;
         i = i > nx-1 ? nx-1 : i;
@@ -160,8 +160,8 @@ public:
         //                  data[3*(i+1)+3*nx*(j+1)+1],
         //                  data[3*(i+1)+3*nx*(j+1)+2])/256.0f;
         //
-        // float u1 = nx*uv.x - floor(nx*uv.x);
-        // float v1 = ny*uv.y - floor(ny*uv.y);
+        // float u1 = nx*uv.x() - floor(nx*uv.x());
+        // float v1 = ny*uv.y() - floor(ny*uv.y());
         // float u2 = (-2*u1+3)*u1*u1;
         // float v2 = (-2*v1+3)*v1*v1;
         //

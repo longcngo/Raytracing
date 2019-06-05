@@ -80,12 +80,12 @@ public:
         Vec3 p1 = base + v0;
         Vec3 p2 = base + v1;
         Vec3 p3 = base + v0 + v1;
-        Vec3 small = Vec3(ffmin(ffmin(p0.x, p1.x), ffmin(p2.x, p3.x)),
-        ffmin(ffmin(p0.y, p1.y), ffmin(p2.y, p3.y)),
-        ffmin(ffmin(p0.z, p1.z), ffmin(p2.z, p3.z)));
-        Vec3 large = Vec3(ffmax(ffmax(p0.x, p1.x), ffmax(p2.x, p3.x)),
-        ffmax(ffmax(p0.y, p1.y), ffmax(p2.y, p3.y)),
-        ffmax(ffmax(p0.z, p1.z), ffmax(p2.z, p3.z)));
+        Vec3 small = Vec3(ffmin(ffmin(p0.x(), p1.x()), ffmin(p2.x(), p3.x())),
+        ffmin(ffmin(p0.y(), p1.y()), ffmin(p2.y(), p3.y())),
+        ffmin(ffmin(p0.z(), p1.z()), ffmin(p2.z(), p3.z())));
+        Vec3 large = Vec3(ffmax(ffmax(p0.x(), p1.x()), ffmax(p2.x(), p3.x())),
+        ffmax(ffmax(p0.y(), p1.y()), ffmax(p2.y(), p3.y())),
+        ffmax(ffmax(p0.z(), p1.z()), ffmax(p2.z(), p3.z())));
         box = bbox(small, large);
         return true;
     }

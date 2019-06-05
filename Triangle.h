@@ -101,12 +101,12 @@ public:
 
     virtual bool bounding_box(float t0, float t1, bbox& box) const
     {
-        Vec3 small = Vec3(ffmin(ffmin(p0.x, p1.x), p2.x),
-        ffmin(ffmin(p0.y, p1.y), p2.y),
-        ffmin(ffmin(p0.z, p1.z), p2.z));
-        Vec3 large = Vec3(ffmax(ffmax(p0.x, p1.x), p2.x),
-        ffmax(ffmax(p0.y, p1.y), p2.y),
-        ffmax(ffmax(p0.z, p1.z), p2.z));
+        Vec3 small = Vec3(ffmin(ffmin(p0.x(), p1.x()), p2.x()),
+        ffmin(ffmin(p0.y(), p1.y()), p2.y()),
+        ffmin(ffmin(p0.z(), p1.z()), p2.z()));
+        Vec3 large = Vec3(ffmax(ffmax(p0.x(), p1.x()), p2.x()),
+        ffmax(ffmax(p0.y(), p1.y()), p2.y()),
+        ffmax(ffmax(p0.z(), p1.z()), p2.z()));
         box = bbox(small, large);
         return true;
     }

@@ -43,12 +43,12 @@ inline bool bbox::intersect(const Ray& r, float t_min, float t_max) const
 
 inline bbox surrounding_box(bbox box0, bbox box1)
 {
-    Vec3 small = Vec3(ffmin(box0.min().x, box1.min().x),
-    ffmin(box0.min().y, box1.min().y),
-    ffmin(box0.min().z, box1.min().z));
-    Vec3 large = Vec3(ffmax(box0.max().x, box1.max().x),
-    ffmax(box0.max().y, box1.max().y),
-    ffmax(box0.max().z, box1.max().z));
+    Vec3 small = Vec3(ffmin(box0.min().x(), box1.min().x()),
+    ffmin(box0.min().y(), box1.min().y()),
+    ffmin(box0.min().z(), box1.min().z()));
+    Vec3 large = Vec3(ffmax(box0.max().x(), box1.max().x()),
+    ffmax(box0.max().y(), box1.max().y()),
+    ffmax(box0.max().z(), box1.max().z()));
     return bbox(small, large);
 }
 

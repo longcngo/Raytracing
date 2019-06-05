@@ -76,13 +76,13 @@ public:
 
     inline float noise(const Vec3& p) const
     {
-        int fi = int(floor(p.x));
-        int fj = int(floor(p.y));
-        int fk = int(floor(p.z));
+        int fi = int(floor(p.x()));
+        int fj = int(floor(p.y()));
+        int fk = int(floor(p.z()));
 
-        float fx = p.x - floor(p.x);
-        float fy = p.y - floor(p.y);
-        float fz = p.z - floor(p.z);
+        float fx = p.x() - floor(p.x());
+        float fy = p.y() - floor(p.y());
+        float fz = p.z() - floor(p.z());
 
         float sum = 0.0f;
         Vec3 v;
@@ -106,7 +106,7 @@ public:
     inline float knot(int i, int j, int k, Vec3& v) const
     {
         Vec3 unit = gamma(i,j,k);
-        return omega(v.x)*omega(v.y)*omega(v.z)*dot(unit, v);
+        return omega(v.x())*omega(v.y())*omega(v.z())*dot(unit, v);
     }
 
     inline float omega(float t) const

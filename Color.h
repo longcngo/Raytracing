@@ -8,61 +8,39 @@ class Color
 {
 public:
     // three elements
-    float r;
-    float g;
-    float b;
+    float c[3];
 
     // constructors
-    Color() { r = 0.0f; g = 0.0f; b = 0.0f; };
+    Color() { c[0] = c[1] = c[2] = 0; };
     Color(const float rr, const float gg, const float bb)
     {
-        r = rr;
-        g = gg;
-        b = bb;
+        c[0] = rr;
+        c[1] = gg;
+        c[2] = bb;
     };
 
     // unary operatooers
-    float operator[] (int i) const
-    {
-        switch (i) {
-            case 0:
-            return r;
-            case 1:
-            return g;
-            case 2:
-            return b;
-            default:
-            throw std::invalid_argument( "out of bounds value" );
-        }
-    }
-    float& operator[] (int i)
-    {
-        switch (i) {
-            case 0:
-            return r;
-            case 1:
-            return g;
-            case 2:
-            return b;
-            default:
-            throw std::invalid_argument( "out of bounds value" );
-        }
-    }
+
+    float operator[] (int i) const { return c[i]; }
+    float& operator[] (int i) { return c[i]; }
+    float r() { return c[0]; }
+    float b() { return c[1]; }
+    float g() { return c[2]; }
 
     // binary operators w/ and w/o shorthands
-    inline Color operator+(const Color& c) const { return Color(r+c.r, g+c.g, b+c.b); }
-    inline Color operator-(const Color& c) const { return Color(r-c.r, g-c.g, b-c.b); }
-    inline Color operator*(const Color& c) const { return Color(r*c.r, g*c.g, b*c.b); }
-    inline Color operator/(const Color& c) const { return Color(r/c.r, g/c.g, b/c.b); }
+    inline Color operator+(const Color& c) const { return Color(r+c.r(), g+c.g(), b+c.b()); }
+    inline Color operator-(const Color& c) const { return Color(r-c.r(), g-c.g(), b-c.b()); }
+    inline Color operator*(const Color& c) const { return Color(r*c.r(), g*c.g(), b*c.b()); }
+    inline Color operator/(const Color& c) const { return Color(r/c.r(), g/c.g(), b/c.b()); }
     inline Color operator+(float t) const { return Color(r+t, g+t, b+t); }
     inline Color operator-(float t) const { return Color(r-t, g-t, b-t); }
     inline Color operator*(float t) const { return Color(r*t, g*t, b*t); }
     inline Color operator/(float t) const { return Color(r/t, g/t, b/t); }
 
-    inline Color& operator+=(const Color& c) { r += c.r; g += c.g; b += c.b; return *this; }
-    inline Color& operator-=(const Color& c) { r -= c.r; g -= c.g; b -= c.b; return *this; }
-    inline Color& operator*=(const Color& c) { r *= c.r; g *= c.g; b *= c.b; return *this; }
-    inline Color& operator/=(const Color& c) { r /= c.r; g /= c.g; b /= c.b; return *this; }
+    inline Color& operator+=(const Color& c) { r += c.r(); g += c.g(); b += c.b(); return *this; }
+    inline Color& operator-=(const Color& c) { r -= c.r(); g -= c.g(); b -= c.b(); return *this; }
+    inline Color& operator*=(const Color& c) { r *= c.r(); g *= c.g(); b *= c.b(); return *this; }
+    inline Color& operator/=(const Color& c) { r /= c.r(); g /= c.g(); b /= c.b(); return *this; }
     inline Color& operator+=(float t) { r += t; g += t; b += t; return *this; }
     inline Color& operator-=(float t) { r -= t; g -= t; b -= t; return *this; }
     inline Color& operator*=(float t) { r *= t; g *= t; b *= t; return *this; }
@@ -85,13 +63,13 @@ public:
 
 inline std::istream& operator>>(std::istream &is, Color &t)
 {
-    is >> t.r >> t.g >> t.b;
+    is >> t.r() >> t.g() >> t.b();
     return is;
 }
 
 inline std::ostream& operator<<(std::ostream &os, const Color &t)
 {
-    os << t.r << " " << t.g << " " << t.b;
+    os << t.r() << " " << t.g() << " " << t.b();
     return os;
 }
 
@@ -107,16 +85,16 @@ inline Color operator*(const Color &c, float t)
 
 inline bool operator==(const Color& c1, const Color& c2)
 {
-    if (c1.r != c2.r) { return false; }
-    if (c1.g != c2.g) { return false; }
-    if (c1.b != c2.b) { return false; }
+    if (c1.r() != c2.r()) { return false; }
+    if (c1.g() != c2.g()) { return false; }
+    if (c1.b() != c2.b()) { return false; }
     return true;
 }
 inline bool operator!=(const Color& c1, const Color& c2)
 {
-    if (c1.r == c2.r) { return false; }
-    if (c1.g == c2.g) { return false; }
-    if (c1.b == c2.b) { return false; }
+    if (c1.r() == c2.r()) { return false; }
+    if (c1.g() == c2.g()) { return false; }
+    if (c1.b() == c2.b()) { return false; }
     return true;
 }
 
