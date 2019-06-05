@@ -9,8 +9,7 @@ void get_sphere_uv(const Vec3& p, Vec2& uv)
 {
     float theta = asin(p.y());
     float phi = atan2(p.z(), p.x());
-    uv.x = 1-((phi + M_PI)/(2*M_PI));
-    uv.y = (0.5f*M_PI+theta)/(M_PI);
+    uv = Vec2(1-((phi + M_PI)/(2*M_PI)), (0.5f*M_PI+theta)/(M_PI));
 }
 
 class Sphere : public Intersectable

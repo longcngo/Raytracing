@@ -118,7 +118,7 @@ inline std::ostream& operator<<(std::ostream& os, const ONB& t)
 
 inline bool operator==(const ONB& o1, const ONB& o2)
 {
-    return ((o1.u == o2.u) && (o1.v == o2.v) && (o1.w == o2.w);
+    return ((o1.u == o2.u) && (o1.v == o2.v) && (o1.w == o2.w));
 }
 
 inline bool operator!=(const ONB& o1, const ONB& o2)

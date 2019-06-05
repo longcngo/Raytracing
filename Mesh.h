@@ -1,7 +1,7 @@
 #ifndef MESHH
 #define MESHH
 
-#include "Intersectable.h"
+#include "Intersection.h"
 #include "DynArray.h"
 
 class Material;
