@@ -15,32 +15,35 @@ public:
     int p[3];
     int n[3];
     int uv[3];
-    bool hasN, hasUV;
     int mat_idx;
 
-    Triangle() {}
-    Triangle(Mesh *m, int a, int b, int c, int mat)
+    MeshTriangle() {}
+    MeshTriangle(Mesh *m, int a, int b, int c, int mat=0)
     {
         mesh = m;
         p[0] = a; p[1] = b; p[2] = c;
-        hasN = false; hasUV = false;
         mat_idx = mat;
     }
-    Triangle(Mesh *m, int a, int b, int c, int d, int e, int f, int mat)
+    MeshTriangle(Mesh *m, int a, int b, int c, int d, int e, int f, bool isUV, int mat=0)
     {
         mesh = m;
         p[0] = a; p[1] = b; p[2] = c;
-        n[0] = d; n[1] = e; n[2] = f;
-        hasN = true; hasUV = false;
+        if (isUV)
+        {
+            uv[0] = d; uv[1] = e; uv[2] = f;
+        }
+        else
+        {
+            n[0] = d; n[1] = e; n[2] = f;
+        }
         mat_idx = mat;
     }
-    Triangle(Mesh *m, int a, int b, int c, int d, int e, int f, int g, int h, int i, int mat)
+    MeshTriangle(Mesh *m, int a, int b, int c, int d, int e, int f, int g, int h, int i, int mat=0)
     {
         mesh = m;
         p[0] = a; p[1] = b; p[2] = c;
         n[0] = d; n[1] = e; n[2] = f;
         uv[0] = g; uv[1] = h; uv[2] = i;
-        hasN = true; hasUV = true;
         mat_idx = mat;
     }
     virtual bool intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const
@@ -89,11 +92,11 @@ public:
             Vec3 n0, n1, n2;
             Vec2 uv0, uv1, uv2;
 
-            if (hasN)
+            if (mesh->has_n)
             {
-                n0 = mesh->vertsN[n[0]];
-                n1 = mesh->vertsN[n[1]];
-                n2 = mesh->vertsN[n[2]];
+                n0 = mesh->verts_n[n[0]];
+                n1 = mesh->verts_n[n[1]];
+                n2 = mesh->verts_n[n[2]];
             }
             else
             {
@@ -101,11 +104,11 @@ public:
                 n0 = n; n1 = n; n2 = n;
             }
 
-            if (hasUV)
+            if (mesh->has_uv)
             {
-                uv0 = mesh->vertsUV[uv[0]];
-                uv1 = mesh->vertsUV[uv[1]];
-                uv2 = mesh->vertsUV[uv[2]];
+                uv0 = mesh->verts_uv[uv[0]];
+                uv1 = mesh->verts_uv[uv[1]];
+                uv2 = mesh->verts_uv[uv[2]];
             }
             else
             {
@@ -120,7 +123,7 @@ public:
             isect.normal = alpha*n0+beta*n1+gamma*n2;
             isect.normal.normalize();
             isect.uv = alpha*uv0+beta*uv1+gamma*uv2;
-            isect.mat = mat_ptr;
+            isect.mat = mesh->materials[mat_idx];
             return true;
         }
 
