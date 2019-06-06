@@ -1,5 +1,4 @@
 #include <fstream>
-#include <iostream>
 #include <cstdio>
 #include <cfloat>
 #include "Scenes.h"
@@ -100,8 +99,10 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
     Intersectable *world;
 
     //world = simple_sphere_scene(cam, lights, x_max, y_max);
-    world = simple_triangle_scene(cam, lights, x_max, y_max);
+    //world = simple_triangle_scene(cam, lights, x_max, y_max);
     //world = simple_rect_scene(cam, lights, x_max, y_max);
+    world = simple_mesh_scene1(cam, lights, x_max, y_max);
+    //world = simple_mesh_scene2(cam, lights, x_max, y_max);
     //world = simple_texture_scene(cam, lights, x_max, y_max);
     //world = simple_perlin_scene(cam, lights, x_max, y_max);
     //world = simple_turb_scene(cam, lights, x_max, y_max);
@@ -150,7 +151,7 @@ int main()
     double duration;
 
     ofstream outfile;
-    outfile.open("output/raytrace_61.ppm", ios::out | ios::trunc);
+    outfile.open("output/raytrace_62.ppm", ios::out | ios::trunc);
     int image_w = 300;
     int image_h = 300;
     int samples = 100;

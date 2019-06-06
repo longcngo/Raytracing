@@ -4,9 +4,11 @@
 
 #include <cfloat>
 #include "stb_image.h"
+#include "DynArray.h"
 #include "Sphere.h"
 #include "Triangle.h"
 #include "Parallelogram.h"
+#include "ObjLoader.h"
 #include "Camera.h"
 #include "Material.h"
 #include "IntersectList.h"
@@ -76,6 +78,51 @@ Intersectable *simple_rect_scene(Camera& cam, LightList& lights, float x_max, fl
     list[1] = para;
 
     return new IntersectList(list, list_size);
+}
+
+Intersectable *simple_mesh_scene1(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+    Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
+    Vec3 lookat = Vec3(-0.15f,0.0f,0.5f);
+    Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+    float dist_to_focus = 10.0f;
+    float aperature = 0.1f;
+    cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+    Light ** l_list = new Light*[1];
+    l_list[0] = new PointLight(Vec3(10.0f, 10.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+    lights = LightList(l_list , 1);
+
+    int list_size = 1;
+    Intersectable **list = new Intersectable*[5000];
+    list[0] = new Sphere(Vec3(0.0f,-1001.0f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
+    Texture *turb_stripe = new TurbStripeTexture(1.0f, 5.0f, 10.0f);
+    Mesh *cube_mesh = new Mesh(new Lambertian(turb_stripe));
+    parse_obj("input/objs/cube.obj", cube_mesh, list, list_size);
+
+    return new BVHNode(list, list_size, 0.0f, 0.0f);
+}
+
+Intersectable *simple_mesh_scene2(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+    Vec3 lookfrom = Vec3(4.0f, 2.5f, 4.0f);
+    Vec3 lookat = Vec3(-0.15f,0.0f,0.5f);
+    Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+    float dist_to_focus = 10.0f;
+    float aperature = 0.1f;
+    cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+    Light ** l_list = new Light*[1];
+    l_list[0] = new PointLight(Vec3(10.0f, 10.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+    lights = LightList(l_list , 1);
+
+    int list_size = 1;
+    Intersectable **list = new Intersectable*[5000];
+    list[0] = new Sphere(Vec3(0.0f,-1001.0f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
+    Mesh *cow_mesh = new Mesh(new Lambertian(new ConstantTexture(Color(0.9f, 1.0f, 0.9f))));
+    parse_obj("input/objs/cow.obj", cow_mesh, list, list_size);
+
+    return new BVHNode(list, list_size, 0.0f, 0.0f);
 }
 
 Intersectable *simple_texture_scene(Camera& cam, LightList& lights, float x_max, float y_max)

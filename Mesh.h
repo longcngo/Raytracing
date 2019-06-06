@@ -29,7 +29,7 @@ public:
         verts_n = DynArray<Vec3>(1024);
         verts_uv = DynArray<Vec2>(1024);
         materials = DynArray<Material*>();
-        materials[0] = m;
+        materials.append(m);
     }
 
 };

@@ -27,23 +27,23 @@ public:
     MeshTriangle(Mesh *m, int a, int b, int c, int d, int e, int f, bool isUV, int mat=0)
     {
         mesh = m;
-        p[0] = a; p[1] = b; p[2] = c;
+        p[0] = a; p[1] = c; p[2] = e;
         if (isUV)
         {
-            uv[0] = d; uv[1] = e; uv[2] = f;
+            uv[0] = b; uv[1] = d; uv[2] = f;
         }
         else
         {
-            n[0] = d; n[1] = e; n[2] = f;
+            n[0] = b; n[1] = d; n[2] = f;
         }
         mat_idx = mat;
     }
     MeshTriangle(Mesh *m, int a, int b, int c, int d, int e, int f, int g, int h, int i, int mat=0)
     {
         mesh = m;
-        p[0] = a; p[1] = b; p[2] = c;
-        n[0] = d; n[1] = e; n[2] = f;
-        uv[0] = g; uv[1] = h; uv[2] = i;
+        p[0] = a; p[1] = d; p[2] = g;
+        uv[0] = b; uv[1] = e; uv[2] = h;
+        n[0] = c; n[1] = f; n[2] = i;
         mat_idx = mat;
     }
     virtual bool intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const
