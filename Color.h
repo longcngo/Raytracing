@@ -11,7 +11,7 @@ public:
     float c[3];
 
     // constructors
-    Color() { c[0] = c[1] = c[2] = 0; };
+    Color() { c[0] = 0.0f; c[1] = 0.0f; c[2] = 0.0f; };
     Color(const float rr, const float gg, const float bb)
     {
         c[0] = rr;
@@ -28,19 +28,19 @@ public:
     float g() const { return c[2]; }
 
     // binary operators w/ and w/o shorthands
-    inline Color operator+(const Color& c) const { return Color(c[0]+c.c[0], c[1]+c.c[1], c[2]+c.c[2]); }
-    inline Color operator-(const Color& c) const { return Color(c[0]-c.c[0], c[1]-c.c[1], c[2]-c.c[2]); }
-    inline Color operator*(const Color& c) const { return Color(c[0]*c.c[0], c[1]*c.c[1], c[2]*c.c[2]); }
-    inline Color operator/(const Color& c) const { return Color(c[0]/c.c[0], c[1]/c.c[1], c[2]/c.c[2]); }
+    inline Color operator+(const Color& col) const { return Color(c[0]+col.c[0], c[1]+col.c[1], c[2]+col.c[2]); }
+    inline Color operator-(const Color& col) const { return Color(c[0]-col.c[0], c[1]-col.c[1], c[2]-col.c[2]); }
+    inline Color operator*(const Color& col) const { return Color(c[0]*col.c[0], c[1]*col.c[1], c[2]*col.c[2]); }
+    inline Color operator/(const Color& col) const { return Color(c[0]/col.c[0], c[1]/col.c[1], c[2]/col.c[2]); }
     inline Color operator+(float t) const { return Color(c[0]+t, c[1]+t, c[2]+t); }
     inline Color operator-(float t) const { return Color(c[0]-t, c[1]-t, c[2]-t); }
     inline Color operator*(float t) const { return Color(c[0]*t, c[1]*t, c[2]*t); }
     inline Color operator/(float t) const { return Color(c[0]/t, c[1]/t, c[2]/t); }
 
-    inline Color& operator+=(const Color& c) { *this = *this + c; return *this; }
-    inline Color& operator-=(const Color& c) { *this = *this - c; return *this; }
-    inline Color& operator*=(const Color& c) { *this = *this * c; return *this; }
-    inline Color& operator/=(const Color& c) { *this = *this / c; return *this; }
+    inline Color& operator+=(const Color& col) { *this = *this + col; return *this; }
+    inline Color& operator-=(const Color& col) { *this = *this - col; return *this; }
+    inline Color& operator*=(const Color& col) { *this = *this * col; return *this; }
+    inline Color& operator/=(const Color& col) { *this = *this / col; return *this; }
     inline Color& operator+=(float t) { c[0] += t; c[1] += t; c[2] += t; return *this; }
     inline Color& operator-=(float t) { c[0] -= t; c[1] -= t; c[2] -= t; return *this; }
     inline Color& operator*=(float t) { c[0] *= t; c[1] *= t; c[2] *= t; return *this; }
@@ -73,32 +73,32 @@ inline std::ostream& operator<<(std::ostream &os, const Color &t)
     return os;
 }
 
-inline Color operator*(float t, const Color &c)
+inline Color operator*(float t, const Color &col)
 {
-    return c*t;
+    return col*t;
 }
 
-inline Color operator*(const Color &c, float t)
+inline Color operator*(const Color &col, float t)
 {
-    return t*c;
+    return t*col;
 }
 
-inline bool operator==(const Color& c1, const Color& c2)
+inline bool operator==(const Color& col1, const Color& col2)
 {
-    if (c1.c[0] != c2.c[0]) { return false; }
-    if (c1.c[1] != c2.c[1]) { return false; }
-    if (c1.c[2] != c2.c[2]) { return false; }
+    if (col1.c[0] != col2.c[0]) { return false; }
+    if (col1.c[1] != col2.c[1]) { return false; }
+    if (col1.c[2] != col2.c[2]) { return false; }
     return true;
 }
-inline bool operator!=(const Color& c1, const Color& c2)
+inline bool operator!=(const Color& col1, const Color& col2)
 {
-    if (c1.c[0] == c2.c[0]) { return false; }
-    if (c1.c[1] == c2.c[1]) { return false; }
-    if (c1.c[2] == c2.c[2]) { return false; }
+    if (col1.c[0] == col2.c[0]) { return false; }
+    if (col1.c[1] == col2.c[1]) { return false; }
+    if (col1.c[2] == col2.c[2]) { return false; }
     return true;
 }
 
-inline Color lerp(const Color& c1, const Color& c2, float t)
+inline Color lerp(const Color& col1, const Color& col2, float t)
 {
-    return (1.0f-t)*c1 + t*c2;
+    return (1.0f-t)*col1 + t*col2;
 }

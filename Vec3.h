@@ -11,7 +11,7 @@ public:
     float v[3];
 
     // constructors
-    Vec3() { v[0] = v[1] = v[2] = 0; };
+    Vec3() { v[0] = 0.0f; v[1] = 0.0f; v[2] = 0.0f; };
     Vec3(const float xx, const float yy, const float zz)
     {
         v[0] = xx;
@@ -29,10 +29,10 @@ public:
     Vec3 operator-() const { return Vec3(-v[0], -v[1], -v[2]); }
 
     // binary operators
-    inline Vec3& operator+=(const Vec3& v);
-    inline Vec3& operator-=(const Vec3& v);
-    inline Vec3& operator*=(const Vec3& v);
-    inline Vec3& operator/=(const Vec3& v);
+    inline Vec3& operator+=(const Vec3& vec);
+    inline Vec3& operator-=(const Vec3& vec);
+    inline Vec3& operator*=(const Vec3& vec);
+    inline Vec3& operator/=(const Vec3& vec);
     inline Vec3& operator*=(float t);
     inline Vec3& operator/=(float t);
 
@@ -66,79 +66,79 @@ inline void Vec3::normalize()
     v[0] *= k; v[1] *= k; v[2] *= k;
 }
 
-inline Vec3 operator+(const Vec3 &v1, const Vec3 &v2)
+inline Vec3 operator+(const Vec3 &vec1, const Vec3 &vec2)
 {
-    return Vec3(v1.v[0]+v2.v[0], v1.v[1]+v2.v[1], v1.v[2]+v2.v[2]);
+    return Vec3(vec1.v[0]+vec2.v[0], vec1.v[1]+vec2.v[1], vec1.v[2]+vec2.v[2]);
 }
 
-inline Vec3 operator-(const Vec3 &v1, const Vec3 &v2)
+inline Vec3 operator-(const Vec3 &vec1, const Vec3 &vec2)
 {
-    return Vec3(v1.v[0]-v2.v[0], v1.v[1]-v2.v[1], v1.v[2]-v2.v[2]);
+    return Vec3(vec1.v[0]-vec2.v[0], vec1.v[1]-vec2.v[1], vec1.v[2]-vec2.v[2]);
 }
 
-inline Vec3 operator*(const Vec3 &v1, const Vec3 &v2)
+inline Vec3 operator*(const Vec3 &vec1, const Vec3 &vec2)
 {
-    return Vec3(v1.v[0]*v2.v[0], v1.v[1]*v2.v[1], v1.v[2]*v2.v[2]);
+    return Vec3(vec1.v[0]*vec2.v[0], vec1.v[1]*vec2.v[1], vec1.v[2]*vec2.v[2]);
 }
 
-inline Vec3 operator/(const Vec3 &v1, const Vec3 &v2)
+inline Vec3 operator/(const Vec3 &vec1, const Vec3 &vec2)
 {
-    return Vec3(v1.v[0]/v2.v[0], v1.v[1]/v2.v[1], v1.v[2]/v2.v[2]);
+    return Vec3(vec1.v[0]/vec2.v[0], vec1.v[1]/vec2.v[1], vec1.v[2]/vec2.v[2]);
 }
 
-inline Vec3 operator*(float t, const Vec3 &v)
+inline Vec3 operator*(float t, const Vec3 &vec)
 {
-    return Vec3(v.v[0]*t, v.v[1]*t, v.v[2]*t);
+    return Vec3(vec.v[0]*t, vec.v[1]*t, vec.v[2]*t);
 }
 
-inline Vec3 operator/(float t, const Vec3 &v)
+inline Vec3 operator/(float t, const Vec3 &vec)
 {
-    return Vec3(v.v[0]/t, v.v[1]/t, v.v[2]/t);
+    return Vec3(vec.v[0]/t, vec.v[1]/t, vec.v[2]/t);
 }
 
-inline Vec3 operator*(const Vec3 &v, float t)
+inline Vec3 operator*(const Vec3 &vec, float t)
 {
-    return Vec3(v.v[0]*t, v.v[1]*t, v.v[2]*t);
+    return Vec3(vec.v[0]*t, vec.v[1]*t, vec.v[2]*t);
 }
 
-inline Vec3 operator/(const Vec3 &v, float t)
+inline Vec3 operator/(const Vec3 &vec, float t)
 {
-    return Vec3(v.v[0]/t, v.v[1]/t, v.v[2]/t);
+    return Vec3(vec.v[0]/t, vec.v[1]/t, vec.v[2]/t);
 }
 
-inline float dot(const Vec3 &v1, const Vec3 &v2)
+inline float dot(const Vec3 &vec1, const Vec3 &vec2)
 {
-    return v1.v[0]*v2.v[0] + v1.v[1]*v2.v[1] + v1.v[2]*v2.v[2];
+    return vec1.v[0]*vec2.v[0] + vec1.v[1]*vec2.v[1] + vec1.v[2]*vec2.v[2];
 }
 
-inline Vec3 cross(const Vec3 &v1, const Vec3 &v2)
+inline Vec3 cross(const Vec3 &vec1, const Vec3 &vec2)
 {
-    return Vec3((v1.v[1]*v2.v[2] - v1.v[2]*v2.v[1]),
-    (v1.v[2]*v2.v[0] - v1.v[0]*v2.v[2]),
-    (v1.v[0]*v2.v[1] - v1.v[1]*v2.v[0]));
+    return Vec3((vec1.v[1]*vec2.v[2] - vec1.v[2]*vec2.v[1]),
+    (vec1.v[2]*vec2.v[0] - vec1.v[0]*vec2.v[2]),
+    (vec1.v[0]*vec2.v[1] - vec1.v[1]*vec2.v[0]));
 }
 
-inline Vec3& Vec3::operator+=(const Vec3 &v)
+inline Vec3& Vec3::operator+=(const Vec3 &vec)
 {
-    *this = *this + v;
+    *this = *this + vec;
     return *this;
 }
 
-inline Vec3& Vec3::operator-=(const Vec3 &v)
+inline Vec3& Vec3::operator-=(const Vec3 &vec)
 {
-    *this = *this - v;
+    *this = *this - vec;
     return *this;
 }
 
-inline Vec3& Vec3::operator*=(const Vec3 &v)
+inline Vec3& Vec3::operator*=(const Vec3 &vec)
 {
-    *this = *this * v;
+    *this = *this * vec;
     return *this;
 }
 
-inline Vec3& Vec3::operator/=(const Vec3 &v)
+inline Vec3& Vec3::operator/=(const Vec3 &vec)
 {
-    *this = *this / v;
+    *this = *this / vec;
     return *this;
 }
 
@@ -155,23 +155,23 @@ inline Vec3& Vec3::operator/=(float t)
     return *this;
 }
 
-inline bool operator==(const Vec3 &v1, const Vec3 &v2)
+inline bool operator==(const Vec3 &vec1, const Vec3 &vec2)
 {
-    if (v1.v[0] != v2.v[0]) { return false; }
-    if (v1.v[1] != v2.v[1]) { return false; }
-    if (v1.v[2] != v2.v[2]) { return false; }
+    if (vec1.v[0] != vec2.v[0]) { return false; }
+    if (vec1.v[1] != vec2.v[1]) { return false; }
+    if (vec1.v[2] != vec2.v[2]) { return false; }
     return true;
 }
 
-inline bool operator!=(const Vec3 &v1, const Vec3 &v2)
+inline bool operator!=(const Vec3 &vec1, const Vec3 &vec2)
 {
-    if (v1.v[0] == v2.v[0]) { return false; }
-    if (v1.v[1] == v2.v[1]) { return false; }
-    if (v1.v[2] == v2.v[2]) { return false; }
+    if (vec1.v[0] == vec2.v[0]) { return false; }
+    if (vec1.v[1] == vec2.v[1]) { return false; }
+    if (vec1.v[2] == vec2.v[2]) { return false; }
     return true;
 }
 
-inline Vec3 unit_vector(Vec3 v)
+inline Vec3 unit_vector(Vec3 vec)
 {
-    return v/v.length();
+    return vec/vec.length();
 }

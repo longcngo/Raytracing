@@ -11,7 +11,7 @@ public:
     float v[2];
 
     // constructors
-    Vec2() { v[0] = v[1] = 0.0f; };
+    Vec2() { v[0] = 0.0f; v[1] = 0.0f; };
     Vec2(const float xx, const float yy)
     {
         v[0] = xx;
@@ -27,10 +27,10 @@ public:
     Vec2 operator-() const { return Vec2(-v[0], -v[1]); }
 
     // binary operators
-    inline Vec2& operator+=(const Vec2& v);
-    inline Vec2& operator-=(const Vec2& v);
-    inline Vec2& operator*=(const Vec2& v);
-    inline Vec2& operator/=(const Vec2& v);
+    inline Vec2& operator+=(const Vec2& vec);
+    inline Vec2& operator-=(const Vec2& vec);
+    inline Vec2& operator*=(const Vec2& vec);
+    inline Vec2& operator/=(const Vec2& vec);
     inline Vec2& operator*=(float t);
     inline Vec2& operator/=(float t);
 
@@ -64,72 +64,72 @@ inline void Vec2::normalize()
     v[0] *= k; v[1] *= k;
 }
 
-inline Vec2 operator+(const Vec2 &v1, const Vec2 &v2)
+inline Vec2 operator+(const Vec2 &vec1, const Vec2 &vec2)
 {
-    return Vec2(v1.v[0]+v2.v[0], v1.v[1]+v2.v[1]);
+    return Vec2(vec1.v[0]+vec2.v[0], vec1.v[1]+vec2.v[1]);
 }
 
-inline Vec2 operator-(const Vec2 &v1, const Vec2 &v2)
+inline Vec2 operator-(const Vec2 &vec1, const Vec2 &vec2)
 {
-    return Vec2(v1.v[0]-v2.v[0], v1.v[1]-v2.v[1]);
+    return Vec2(vec1.v[0]-vec2.v[0], vec1.v[1]-vec2.v[1]);
 }
 
-inline Vec2 operator*(const Vec2 &v1, const Vec2 &v2)
+inline Vec2 operator*(const Vec2 &vec1, const Vec2 &vec2)
 {
-    return Vec2(v1.v[0]*v2.v[0], v1.v[1]*v2.v[1]);
+    return Vec2(vec1.v[0]*vec2.v[0], vec1.v[1]*vec2.v[1]);
 }
 
-inline Vec2 operator/(const Vec2 &v1, const Vec2 &v2)
+inline Vec2 operator/(const Vec2 &vec1, const Vec2 &vec2)
 {
-    return Vec2(v1.v[0]/v2.v[0], v1.v[1]/v2.v[1]);
+    return Vec2(vec1.v[0]/vec2.v[0], vec1.v[1]/vec2.v[1]);
 }
 
-inline Vec2 operator*(float t, const Vec2 &v)
+inline Vec2 operator*(float t, const Vec2 &vec)
 {
-    return Vec2(v.v[0]*t, v.v[1]*t);
+    return Vec2(vec.v[0]*t, vec.v[1]*t);
 }
 
-inline Vec2 operator/(float t, const Vec2 &v)
+inline Vec2 operator/(float t, const Vec2 &vec)
 {
-    return Vec2(v.v[0]/t, v.v[1]/t);
+    return Vec2(vec.v[0]/t, vec.v[1]/t);
 }
 
-inline Vec2 operator*(const Vec2 &v, float t)
+inline Vec2 operator*(const Vec2 &vec, float t)
 {
-    return Vec2(v.v[0]*t, v.v[1]*t);
+    return Vec2(vec.v[0]*t, vec.v[1]*t);
 }
 
-inline Vec2 operator/(const Vec2 &v, float t)
+inline Vec2 operator/(const Vec2 &vec, float t)
 {
-    return Vec2(v.v[0]/t, v.v[1]/t);
+    return Vec2(vec.v[0]/t, vec.v[1]/t);
 }
 
-inline float dot(const Vec2 &v1, const Vec2 &v2)
+inline float dot(const Vec2 &vec1, const Vec2 &vec2)
 {
-    return v1.v[0]*v2.v[0] + v1.v[1]*v2.v[1];
+    return vec1.v[0]*vec2.v[0] + vec1.v[1]*vec2.v[1];
 }
 
-inline Vec2& Vec2::operator+=(const Vec2 &v)
+inline Vec2& Vec2::operator+=(const Vec2 &vec)
 {
-    *this = *this + v;
+    *this = *this + vec;
     return *this;
 }
 
-inline Vec2& Vec2::operator-=(const Vec2 &v)
+inline Vec2& Vec2::operator-=(const Vec2 &vec)
 {
-    *this = *this - v;
+    *this = *this - vec;
     return *this;
 }
 
-inline Vec2& Vec2::operator*=(const Vec2 &v)
+inline Vec2& Vec2::operator*=(const Vec2 &vec)
 {
-    *this = *this * v;
+    *this = *this * vec;
     return *this;
 }
 
-inline Vec2& Vec2::operator/=(const Vec2 &v)
+inline Vec2& Vec2::operator/=(const Vec2 &vec)
 {
-    *this = *this / v;
+    *this = *this / vec;
     return *this;
 }
 
@@ -146,21 +146,21 @@ inline Vec2& Vec2::operator/=(float t)
     return *this;
 }
 
-inline bool operator==(const Vec2 &v1, const Vec2 &v2)
+inline bool operator==(const Vec2 &vec1, const Vec2 &vec2)
 {
-    if (v1.v[0] != v2.v[0]) { return false; }
-    if (v1.v[1] != v2.v[1]) { return false; }
+    if (vec1.v[0] != vec2.v[0]) { return false; }
+    if (vec1.v[1] != vec2.v[1]) { return false; }
     return true;
 }
 
-inline bool operator!=(const Vec2 &v1, const Vec2 &v2)
+inline bool operator!=(const Vec2 &vec1, const Vec2 &vec2)
 {
-    if (v1.v[0] == v2.v[0]) { return false; }
-    if (v1.v[1] == v2.v[1]) { return false; }
+    if (vec1.v[0] == vec2.v[0]) { return false; }
+    if (vec1.v[1] == vec2.v[1]) { return false; }
     return true;
 }
 
-inline Vec2 unit_vector(Vec2 v)
+inline Vec2 unit_vector(Vec2 vec)
 {
-    return v/v.length();
+    return vec/vec.length();
 }
