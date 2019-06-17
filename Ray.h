@@ -1,6 +1,18 @@
 #pragma once
 #include "Vec3.h"
 
+/*  Ray.h
+
+    A class that represents a ray with an origin pint and a direction it points
+    to. There is also time for motion blur.
+
+    Very straightfoward class. Though, attributes are still public for
+    speed up despite having getters. Inversed direction is saved as well as
+    booleans for negatives values of inversed direction for efficiency in
+    bounding box calculations as rays are reused for other boxes.
+
+*/
+
 class Ray
 {
 public:

@@ -8,6 +8,19 @@
 #include "OrthonormalBasis.h"
 #include "RNG.h"
 
+/*  Intersection.h
+
+    A class that represents any surface that can be intersected by a ray,
+    including primatives like spheres and triangles, meshes, and volumes. There
+    is also a struct to represent data returned from a ray collidng with a
+    surface.
+
+    In addition with the intersect function, there is also functions for
+    generating a bounding box for acceleration and sample points direct lighting
+    calculations from emittable objects.
+
+*/
+
 class Material;
 
 struct Intersection

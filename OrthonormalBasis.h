@@ -5,6 +5,15 @@
 
 #include "Vec3.h"
 
+/*  OrthonormalBasis.h
+
+    A class for customized bases.
+
+    As there is a need to use different cordinate systems e.g. camera to world
+    space, a ONB class would be useful.
+
+*/
+
 class ONB
 {
 public:

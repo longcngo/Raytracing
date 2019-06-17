@@ -3,6 +3,12 @@
 
 #include "Ray.h"
 
+/*  Camera.h
+
+    A class to represent a thin-lens camera
+
+*/
+
 Vec3 random_in_unit_disk()
 {
     Vec3 p;

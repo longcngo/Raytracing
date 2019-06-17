@@ -5,6 +5,15 @@
 #include "Ray.h"
 #include "Intersection.h"
 
+/*  Material.h
+
+    Classes for materials.
+
+    The materials are used for path tracing for the most part. Though there is
+    an illuminated function for later refinement of tdrect lighting.
+
+*/
+
 struct Intersection;
 
 Vec3 random_in_unit_sphere()
@@ -55,6 +64,7 @@ public:
     virtual Color emitted(const Vec2& uv, const Vec3& p) const { return Color(); }
 };
 
+// diffuse material
 class Lambertian : public Material
 {
 public:
@@ -76,6 +86,7 @@ public:
 
 };
 
+// emittable material
 class DiffuseEmitter : public Material
 {
 public:
@@ -89,6 +100,7 @@ public:
 
 };
 
+// fully specular material
 class Metal : public Material
 {
 public:
@@ -107,6 +119,7 @@ public:
 
 };
 
+// transparent material, like glass
 class Dielectric : public Material
 {
 public:

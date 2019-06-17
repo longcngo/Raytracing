@@ -3,6 +3,14 @@
 
 #include "Intersection.h"
 
+/*  BoundingVolumeHierarchy.h
+
+    A class for a tree structure for bounding boxes. It is an acceleration
+    structure that organizes bounding boxes by position in space along a
+    random axis.
+
+*/
+
 class BVHNode : public Intersectable
 {
 public:
@@ -16,7 +24,7 @@ public:
     virtual bool bounding_box(float t0, float t1, bbox& box) const;
 };
 
-
+// builds up the BVH tree
 BVHNode::BVHNode(Intersectable **l, int n, float time0, float time1)
 {
     if (n == 1)
@@ -31,12 +39,16 @@ BVHNode::BVHNode(Intersectable **l, int n, float time0, float time1)
     else
     {
         int axis = int(3*drand48());
+        // choose random axis
         bbox list_box;
         (*l)->bounding_box(time0, time1, list_box);
+        // create centroid of the entire list of surfaces at the chosen axis
         float pivot = 0.5f*(list_box.max()-list_box.min())[axis];
         int midpoint = 0;
         bbox box_temp;
         Vec3 centroid;
+
+        // partitons the list based on the surface's centroid in space
         for (int i = 0; i < n; i++)
         {
             l[i]->bounding_box(time0, time1, box_temp);
@@ -54,6 +66,8 @@ BVHNode::BVHNode(Intersectable **l, int n, float time0, float time1)
         left = new BVHNode(l, midpoint, time0, time1);
         right = new BVHNode(&l[midpoint], n-midpoint, time0, time1);
     }
+
+    // after being divided, build boxes for the non-leaf nodes
     bbox l_box, r_box;
     if (!left->bounding_box(time0, time1, l_box) || !right->bounding_box(time0, time1, r_box))
     {
@@ -62,6 +76,7 @@ BVHNode::BVHNode(Intersectable **l, int n, float time0, float time1)
     bb = surrounding_box(l_box, r_box);
 }
 
+// checks intersections by recursing down the BVH tree
 bool BVHNode::intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const
 {
     if (bb.intersect(r, t_min, t_max))
@@ -104,6 +119,7 @@ bool BVHNode::intersect(const Ray& r, float t_min, float t_max, Intersection& is
     }
 }
 
+// getter method for the bounding box
 bool BVHNode::bounding_box(float t0, float t1, bbox& box) const
 {
     box = bb;

@@ -5,6 +5,12 @@
 
 #include "Intersection.h"
 
+/*  Parallelogram.h
+
+    A class for parallelograms in a scene.
+
+*/
+
 class Material;
 
 class Parallelogram : public Intersectable

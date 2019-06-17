@@ -3,14 +3,13 @@
 
 #include "Intersection.h"
 
-/*
+/*  IntersectList.h
 
-Intersect_List:
-A container for every object that a ray can interact i.e. any object extending
-"intersectable".
+    A container class for Intersectable surfaces.
 
-The function from "intersectable", loops through every object to get the closest
-object that the ray would collide with, returning true if an object was hit at all
+    It is a straightfoward implementation as it checks for intersection
+    linearly. For scenes with many objects, it is recommended to use an 
+    acceleration struction.
 
 */
 

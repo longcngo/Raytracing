@@ -2,6 +2,16 @@
 #ifndef DYNARRAYH
 #define DYNARRAYH
 
+/*  DynArray.h
+
+    A class for expandable arrays where it doubles in size once its full.
+
+    Since the standard library's vector class is stored as linked lists,
+    a homemade class for C arrays with varible size is better for memory
+    efficiency.
+
+*/
+
 template <class T> class DynArray
 {
 public:

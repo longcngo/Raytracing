@@ -4,6 +4,17 @@
 #include <iostream>
 #include <stdexcept>
 
+/*  Vec2.h
+
+    A class that represents a vector of two floats, usually for texture
+    coordinates.
+
+    Everything being publc and aggressive inlining are used to ensure the class'
+    operations are as fast as possible, which is inportant in a CPU intensive
+    program like a Raytracer.
+
+*/
+
 class Vec2
 {
 public:

@@ -6,7 +6,16 @@
 #include <ctime>
 
 /*
-    RNG class based on xoroshiro128
+    RNG.h
+
+    Random number generator class based on David Blackman and Sebastiano Vigna's
+    xoroshiro128+.
+
+    This generator scheme is chosen due to its speed and low storage costs,
+    which helps make the plenty of sampling in distributed ray tracing and
+    path tracing. The RNG is seeded with time and the splitmix64 RNG, which is
+    fast but less effective than xoroshiro128+.
+
 */
 
 static double float_norm = (1.0f/(1 << 24));

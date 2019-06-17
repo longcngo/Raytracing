@@ -5,6 +5,16 @@
 
 #include "Intersection.h"
 
+/*  Triangle.h
+
+    A class for individual triangles in a scene.
+
+    The intersect method uses MT's algorthim which finds barycentric coordinates
+    through triple products. For meshes, triangles should have pointers to an
+    array of point, normals, and texture coordinates as they are often reused.
+
+*/
+
 class Material;
 
 class Triangle : public Intersectable
@@ -45,6 +55,7 @@ public:
         Vec3 p = cross(r.d(), e2);
         float denom = dot(p, e1);
 
+        // check if the ray's direction is parallel wth the triangle
         if (fabs(denom) < PARALLEL_EPSILON)
         {
             return false;

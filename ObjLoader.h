@@ -7,6 +7,15 @@
 #include "Mesh.h"
 #include "MeshTriangle.h"
 
+/*  ObjLoader.h
+
+    A function that loads up an object file, popullates a mesh and creates mesh
+    trangles for the scene.
+
+    C file scanning is used for better performance and cleaner code.
+
+*/
+
 void parse_obj(const char *filename, Mesh* mesh, Intersectable** list, int& list_size)
 {
     int verts_cnt = 0;
@@ -51,7 +60,7 @@ void parse_obj(const char *filename, Mesh* mesh, Intersectable** list, int& list
         }
         else if (strcmp(line_header, "f ") == 0)
         {
-
+            // obj files starts thier indicies with 1 not 0
             // both uv and norm coords
             if (mesh->has_uv && mesh->has_n)
             {

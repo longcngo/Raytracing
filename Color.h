@@ -4,6 +4,19 @@
 #include <iostream>
 #include <stdexcept>
 
+/*  Color.h
+
+    A class that represents a color in RGB values. This is a seperate class
+    compared to Vec3 as there are different operations between the two. For
+    example, clamping or interpolatng is used more for colors than points in
+    space.
+
+    Everything being publc and aggressive inlining are used to ensure the class'
+    operations are as fast as possible, which is inportant in a CPU intensive
+    program like a Raytracer.
+
+*/
+
 class Color
 {
 public:

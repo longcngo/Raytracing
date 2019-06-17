@@ -4,6 +4,17 @@
 #include "Scenes.h"
 using namespace std;
 
+/*  Raytracing.cpp
+
+    The main raytacing program, handling the IO and the coloring of each pixel.
+
+    The coloring function is split between direct and indirect lighting to have
+    a cleaner look and are seperated anyways for global illumination
+    calculations. Scene setup is in its own file also to seperate clutter from
+    the main file.
+
+*/
+
 Color background(const Ray& r)
 {
     return Color(0.0,0.0,0.0);

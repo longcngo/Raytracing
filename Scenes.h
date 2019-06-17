@@ -15,6 +15,13 @@
 #include "BoundingVolumeHierarchy.h"
 #include "Lights.h"
 
+/*  Scenes.h
+
+    A collections of pregenerated scenes for testing purposes
+
+*/
+
+// sphere and point light test scene
 Intersectable *simple_sphere_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
@@ -35,6 +42,7 @@ Intersectable *simple_sphere_scene(Camera& cam, LightList& lights, float x_max, 
     return new IntersectList(list, 2);
 }
 
+// triangle test scene
 Intersectable *simple_triangle_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
@@ -56,6 +64,7 @@ Intersectable *simple_triangle_scene(Camera& cam, LightList& lights, float x_max
     return new IntersectList(list, 2);
 }
 
+// parallelogram test scene
 Intersectable *simple_rect_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
@@ -80,6 +89,7 @@ Intersectable *simple_rect_scene(Camera& cam, LightList& lights, float x_max, fl
     return new IntersectList(list, list_size);
 }
 
+// cube mesh test scene
 Intersectable *simple_mesh_scene1(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
@@ -103,6 +113,7 @@ Intersectable *simple_mesh_scene1(Camera& cam, LightList& lights, float x_max, f
     return new BVHNode(list, list_size, 0.0f, 0.0f);
 }
 
+// cow mesh test scene
 Intersectable *simple_mesh_scene2(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(4.0f, 2.5f, 4.0f);
@@ -125,6 +136,7 @@ Intersectable *simple_mesh_scene2(Camera& cam, LightList& lights, float x_max, f
     return new BVHNode(list, list_size, 0.0f, 0.0f);
 }
 
+// stripe texture test scene
 Intersectable *simple_texture_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
@@ -146,6 +158,7 @@ Intersectable *simple_texture_scene(Camera& cam, LightList& lights, float x_max,
     return new IntersectList(list, 2);
 }
 
+// perlin noise texture test scene
 Intersectable *simple_perlin_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
@@ -167,6 +180,7 @@ Intersectable *simple_perlin_scene(Camera& cam, LightList& lights, float x_max, 
     return new IntersectList(list, 2);
 }
 
+// turbulance texture test scene
 Intersectable *simple_turb_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
@@ -192,6 +206,7 @@ Intersectable *simple_turb_scene(Camera& cam, LightList& lights, float x_max, fl
     return new IntersectList(list, 4);
 }
 
+// image texture test scene using a grid texture
 Intersectable *simple_img_test_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(5.0f, 4.0f, 5.0f);
@@ -215,6 +230,7 @@ Intersectable *simple_img_test_scene(Camera& cam, LightList& lights, float x_max
     return new IntersectList(list, 2);
 }
 
+// image texture test scene using an earth texture
 Intersectable *simple_earth_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(5.0f, 4.0f, 5.0f);
@@ -237,6 +253,7 @@ Intersectable *simple_earth_scene(Camera& cam, LightList& lights, float x_max, f
     return new IntersectList(list, 1);
 }
 
+// spotlight test scene
 Intersectable *simple_spotlight_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
@@ -257,6 +274,7 @@ Intersectable *simple_spotlight_scene(Camera& cam, LightList& lights, float x_ma
     return new IntersectList(list, 2);
 }
 
+// specular test scene
 Intersectable *simple_mirror_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
@@ -277,6 +295,7 @@ Intersectable *simple_mirror_scene(Camera& cam, LightList& lights, float x_max, 
     return new IntersectList(list, 3);
 }
 
+// glass test scene
 Intersectable *simple_glass_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
@@ -297,6 +316,7 @@ Intersectable *simple_glass_scene(Camera& cam, LightList& lights, float x_max, f
     return new IntersectList(list, 3);
 }
 
+// emittable sphere test
 Intersectable *simple_emitter_scene1(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 6.0f, 9.0f);
@@ -318,6 +338,7 @@ Intersectable *simple_emitter_scene1(Camera& cam, LightList& lights, float x_max
     return new IntersectList(list, 3);
 }
 
+// emittable objects test
 Intersectable *simple_emitter_scene2(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
@@ -345,6 +366,7 @@ Intersectable *simple_emitter_scene2(Camera& cam, LightList& lights, float x_max
     return new IntersectList(list, 4);
 }
 
+// looking between two sphere
 Intersectable *two_sphere_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(0.0f, 0.0f, -1.0f);
@@ -365,6 +387,7 @@ Intersectable *two_sphere_scene(Camera& cam, LightList& lights, float x_max, flo
     return new IntersectList(list, 2);
 }
 
+// three spheres in a line
 Intersectable *three_sphere_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(-2.0f, 2.0f, 1.0f);
@@ -387,6 +410,7 @@ Intersectable *three_sphere_scene(Camera& cam, LightList& lights, float x_max, f
     return new BVHNode(list, 5, 0.0f, 0.0f);
 }
 
+// random sphere scene from "Ray Tracing in a Weekend"
 Intersectable *random_scene(Camera& cam, LightList& lights, float x_max, float y_max)
 {
     Vec3 lookfrom = Vec3(13.0f, 2.0f, 3.0f);

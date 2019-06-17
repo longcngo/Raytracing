@@ -3,6 +3,16 @@
 
 #include "Ray.h"
 
+/*  BoundingBox.h
+
+    A class for boundng boxes, a heurstic for ray-shape intersections by
+    creating a box bounded by the smallest and largest points.
+
+    To speed up ray intersections, the intersect function is inlined as the
+    functions only handle repetative float evaluations,
+
+*/
+
 inline float ffmin(float a, float b){ return a < b ? a : b; }
 inline float ffmax(float a, float b){ return a > b ? a : b; }
 
@@ -19,6 +29,7 @@ public:
     inline bool intersect(const Ray& r, float t_min, float t_max) const;
 };
 
+// optimized intersection function based on the paper by Amy Williams et al.
 inline bool bbox::intersect(const Ray& r, float t_min, float t_max) const
 {
     for (int a = 0; a < 3; a++) {
@@ -41,6 +52,7 @@ inline bool bbox::intersect(const Ray& r, float t_min, float t_max) const
 
 }
 
+// generate a bounding box out of two bounding boxes
 inline bbox surrounding_box(bbox box0, bbox box1)
 {
     Vec3 small = Vec3(ffmin(box0.min().x(), box1.min().x()),

@@ -5,12 +5,21 @@
 #include "Vec2.h"
 #include "Color.h"
 
+/*  Textures.h
+
+    A class for texturing surfaces. Every texture uses UV coordinates to
+    calculate the color at a certain point.
+
+*/
+
 class Texture
 {
 public:
     virtual Color value(const Vec2& uv, const Vec3& p) const = 0;
 };
 
+// A texture for single colors.
+// Essentially a wrapper class.
 class ConstantTexture : public Texture
 {
 public:
@@ -22,6 +31,7 @@ public:
     { return col; }
 };
 
+// A texture for stripes wth variable width
 class StripeTexture : public Texture
 {
 public:
@@ -44,6 +54,8 @@ public:
     }
 };
 
+// A texture for stripes wth variable width and interpolating for a
+// smoother look
 class SmoothStripeTexture : public Texture
 {
 public:
@@ -60,6 +72,7 @@ public:
     }
 };
 
+// A texture for checkered patterns
 class CheckerTexture : public Texture
 {
 public:
@@ -82,6 +95,7 @@ public:
     }
 };
 
+// A texture for Perlin noise generation
 class NoiseTexture : public Texture
 {
 public:
@@ -96,6 +110,7 @@ public:
     }
 };
 
+// A texture for turbulance i.e. recursive Perlin noise generation
 class TurbTexture : public Texture
 {
 public:
@@ -110,6 +125,7 @@ public:
     }
 };
 
+// A texture for striped noise, making it resemble marble
 class TurbStripeTexture : public Texture
 {
 public:
@@ -126,6 +142,7 @@ public:
     }
 };
 
+// A texture that maps a 2D image to a 3D surface
 class ImageTexture : public Texture
 {
 public:
@@ -137,6 +154,7 @@ public:
     { data = pixels; nx = na; ny = nb; }
     virtual Color value(const Vec2& uv, const Vec3& p) const
     {
+        // get pixels from image
         int i = int(nx*uv.x());
         int j = int(ny*(1-uv.y()));
         i = i < 0 ? 0 : i;
@@ -144,10 +162,13 @@ public:
         i = i > nx-1 ? nx-1 : i;
         j = j > ny-1 ? ny-1 : j;
 
+        // extract RGB data from a picture
         Color c0 = Color(data[3*i+3*nx*j],
                          data[3*i+3*nx*j+1],
                          data[3*i+3*nx*j+2])/256.0f;
 
+        // attempted to interpolate neighboring colors, but there is
+        // a bug involving float overflows and nans.
         // Color c1 = Color(data[3*(i+1)+3*nx*j],
         //                  data[3*(i+1)+3*nx*j+1],
         //                  data[3*(i+1)+3*nx*j+2])/256.0f;

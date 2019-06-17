@@ -4,6 +4,16 @@
 #include "Intersection.h"
 #include "DynArray.h"
 
+/*  Mesh.h
+
+    A class that represents triangles meshes. It stores arrays for vertices,
+    normals, and uv coorindates.
+
+    DynArrays are used to account for object files having a variable amount of
+    vertices. If space is a premum, they can be truncated.
+
+*/
+
 class Material;
 
 class Mesh

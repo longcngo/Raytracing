@@ -5,6 +5,16 @@
 
 #include "Intersection.h"
 
+/*  MeshTriangle.h
+
+    A class for triangles part of a mesh. Each triangle stores array indicies
+    from a mesh object.
+
+    The intersect method uses MT's algorthim which finds barycentric coordinates
+    through triple products.
+
+*/
+
 class Mesh;
 class Material;
 

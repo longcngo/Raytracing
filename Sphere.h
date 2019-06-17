@@ -3,6 +3,16 @@
 
 #include "Intersection.h"
 
+/*  Sphere.h
+
+    A class for spheres in a scene.
+
+    The intersect and sample point method uses geometric methods to find the
+    result. There is also a seperate class for motion blur due to needing
+    two centers.
+
+*/
+
 class Material;
 
 void get_sphere_uv(const Vec3& p, Vec2& uv)

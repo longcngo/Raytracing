@@ -4,6 +4,17 @@
 #include <iostream>
 #include <stdexcept>
 
+/*  Vec3.h
+
+    A class that represents a vector of three floats, usually points in space or
+    directions.
+
+    Everything being publc and aggressive inlining are used to ensure the class'
+    operations are as fast as possible, which is inportant in a CPU intensive
+    program like a Raytracer.
+
+*/
+
 class Vec3
 {
 public:

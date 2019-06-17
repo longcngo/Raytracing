@@ -4,6 +4,17 @@
 #include "Color.h"
 #include "Intersection.h"
 
+/*  Lights.h
+
+    Classes for direct lights.
+
+    The implementation is a bit clunky in my opinion as the area light has a
+    pointer to a shape, but the shape must be added to the intersection list
+    to calculate intersections. Though it is still needed to make the AreaLight
+    class the same as the other universal light classes.
+
+*/
+
 struct LightSample
 {
     Vec3 p;
@@ -29,6 +40,7 @@ public:
     LightList(Light **l, int n){ light_list = l; list_size = n; }
 };
 
+// light based on a single point
 class PointLight : public Light
 {
 public:
@@ -48,6 +60,7 @@ public:
     }
 };
 
+// light based on a cone
 class SpotLight : public Light
 {
 public:
@@ -80,6 +93,7 @@ public:
     }
 };
 
+// light based on a surface
 class AreaLight : public Light
 {
   public:
