@@ -41,7 +41,7 @@ public:
         Vec3 n = Vec3(0.0f, 1.0f, 0.0f);
         v = unit_vector(b);
         u = cross(v,n);
-        u = u.length() < ONB_EPSILON ? cross(v,m) : v;
+        u = u.length() < ONB_EPSILON ? cross(v,m) : u;
         w = cross(u,v);
     }
     // construct ONB from w
@@ -51,7 +51,7 @@ public:
         Vec3 n = Vec3(0.0f, 1.0f, 0.0f);
         w = unit_vector(c);
         u = cross(w,n);
-        u = u.length() < ONB_EPSILON ? cross(w,m) : v;
+        u = u.length() < ONB_EPSILON ? cross(w,m) : u;
         v = cross(w,u);
     }
     // construct ONB from u and v

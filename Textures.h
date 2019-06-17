@@ -40,7 +40,8 @@ public:
     float width;
 
     StripeTexture(){}
-    StripeTexture(Texture* t0, Texture* t1, float w){ texture0 = t0; texture1 = t1; width = 1/w; }
+    StripeTexture(Texture* t0, Texture* t1, float w = 1.0f)
+    { texture0 = t0; texture1 = t1; width = 1/w; }
     virtual Color value(const Vec2& uv, const Vec3& p) const
     {
         if (sin((M_PI*p.x())*width) > 0)
@@ -64,7 +65,8 @@ public:
     float width;
 
     SmoothStripeTexture(){}
-    SmoothStripeTexture(Texture* t0, Texture* t1, float w){ texture0 = t0; texture1 = t1; width = 1/w; }
+    SmoothStripeTexture(Texture* t0, Texture* t1, float w = 1.0f)
+    { texture0 = t0; texture1 = t1; width = 1/w; }
     virtual Color value(const Vec2& uv, const Vec3& p) const
     {
         float t = 0.5f*width*(1+sin(M_PI*p.x()));
@@ -78,12 +80,14 @@ class CheckerTexture : public Texture
 public:
     Texture *texture0;
     Texture *texture1;
+    float width;
 
     CheckerTexture(){}
-    CheckerTexture(Texture* t0, Texture* t1){ texture0 = t0; texture1 = t1; }
+    CheckerTexture(Texture* t0, Texture* t1, float w = 10.0f)
+    { texture0 = t0; texture1 = t1; width = w; }
     virtual Color value(const Vec2& uv, const Vec3& p) const
     {
-        float sines = (sin(10*p.x())*sin(10*p.y())*sin(10*p.z()));
+        float sines = (sin(width*p.x())*sin(width*p.y())*sin(width*p.z()));
         if (sines > 0)
         {
             return texture0->value(uv, p);
