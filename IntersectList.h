@@ -16,12 +16,13 @@
 class IntersectList : public Intersectable
 {
 public:
+    Intersectable **isect_list;
+    int list_size;
+
     IntersectList() {}
     IntersectList(Intersectable **l, int n) { isect_list = l; list_size = n; }
     virtual bool intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const;
     virtual bool bounding_box(float t0, float t1, bbox& box) const;
-    Intersectable **isect_list;
-    int list_size;
 };
 
 bool IntersectList::intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const

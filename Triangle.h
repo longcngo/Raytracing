@@ -32,13 +32,17 @@ public:
         Vec3 e1 = p1-p0; Vec3 e2 = p2-p0;
         Vec3 n = unit_vector(cross(e1,e2));
         Vec3 n0 = n; Vec3 n1 = n; Vec3 n2 = n;
-        Vec2 uv0 = Vec2(0.0f,0.0f); Vec2 uv1 = Vec2(0.0f,1.0f); Vec2 uv2 = Vec2(1.0f,0.0f);
+        Vec2 uv0 = Vec2(0.0f,0.0f);
+        Vec2 uv1 = Vec2(0.0f,1.0f);
+        Vec2 uv2 = Vec2(1.0f,0.0f);
     }
     Triangle(Vec3 a, Vec3 b, Vec3 c, Vec3 d, Vec3 e, Vec3 f, Material *m)
     {
         p0 = a; p1 = b; p2 = c;
         n0 = d; n1 = e; n2 = f;
-        Vec2 uv0 = Vec2(0.0f,0.0f); Vec2 uv1 = Vec2(0.0f,1.0f); Vec2 uv2 = Vec2(1.0f,0.0f);
+        Vec2 uv0 = Vec2(0.0f,0.0f);
+        Vec2 uv1 = Vec2(0.0f,1.0f);
+        Vec2 uv2 = Vec2(1.0f,0.0f);
         mat_ptr = m;
     }
     Triangle(Vec3 a, Vec3 b, Vec3 c, Vec3 d, Vec3 e, Vec3 f, Vec2 g, Vec2 h, Vec2 i, Material *m)
@@ -60,7 +64,7 @@ public:
         {
             return false;
         }
-
+        
         denom = 1/denom;
         Vec3 e0 = r.o()-p0;
 

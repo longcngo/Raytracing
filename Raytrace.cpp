@@ -34,7 +34,6 @@ Color direct_lighting(const Intersection& isect, const Ray& r, Intersectable *wo
     {
         if (lights->light_list[i]->get_light(isect.p, ls))
         {
-            //std::cout << ls.p << '\n';
             float light_dist = (ls.p-isect.p).squared_length();
             Ray shadow = Ray(isect.p, ls.dir , r.t());
             if (!(world->intersect(shadow, 0.0001f, FLT_MAX, isect_shadow)) ||
@@ -42,13 +41,11 @@ Color direct_lighting(const Intersection& isect, const Ray& r, Intersectable *wo
                 (isect_shadow.mat->emitted(isect_shadow.uv, isect_shadow.p) != Color()))
             {
                 isect.mat->illuminated(isect, radiance);
-                //std::cout << radiance << '\n';
                 float ndotl = dot(isect.normal, ls.dir);
                 if (ndotl > 0.0f) {
                     attenuation *= ls.c;
                     radiance += attenuation;
                 }
-                //std::cout << radiance << '\n';
             }
         }
     }
@@ -127,8 +124,10 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
     //world = three_sphere_scene(cam, lights, x_max, y_max);
     //world = random_scene(cam, lights, x_max, y_max);
 
-    for (int j = y_max-1; j >= 0; j--) {
-        for (int i = 0; i < x_max; i++) {
+    for (int j = y_max-1; j >= 0; j--)
+    {
+        for (int i = 0; i < x_max; i++)
+        {
             Color col = Color(0.0f,0.0f,0.0f);
             for (int s = 0; s < samples; s++)
             {
@@ -136,10 +135,6 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
                 float vr = xorandf();
                 float u = float(i + ur)/float(x_max);
                 float v = float(j + vr)/float(y_max);
-                // std::cout << "u " << u << "\n";
-                // std::cout << "v " << v << "\n";
-                // std::cout << "ur " << ur << "\n";
-                // std::cout << "vr " << vr << "\n";
                 Ray r = cam.get_ray(u,v);
                 col += raytrace(r, world, &lights);
             }
@@ -152,7 +147,6 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
         }
     }
 
-    //stbi_write_png("raytrace.png", x_max, y_max, int comp, const void *data, int stride_in_bytes);
 }
 
 

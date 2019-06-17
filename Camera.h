@@ -67,14 +67,10 @@ public:
         {
             Vec3 rd = lens_radius*random_in_unit_disk();
             Vec3 offset = u*rd.x() + v*rd.y();
-            float time_rand = time0 + (time1-time0)*drand48();
-            // std::cout << "t0: " << time0 << '\n';
-            // std::cout << "t1: " << time1 << '\n';
-            // std::cout << "t1-t0: " << (time1-time0) << '\n';
-            // std::cout << "t_rand: " << time_rand << '\n';
+            float time_rand = time0 + (time1-time0)*xorandf();
             return Ray(origin + offset, lower_left_corner + s*horizontal + t*vertical - origin - offset, time_rand);
         }
 
-    };
+};
 
-    #endif
+#endif

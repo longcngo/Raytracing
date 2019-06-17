@@ -145,12 +145,6 @@ public:
             }
             else
             {
-                // std::cout << center0 << '\n';
-                // std::cout << center1 << '\n';
-                // std::cout << time0 << '\n';
-                // std::cout << time1 << '\n';
-                // std::cout << r.t() << '\n';
-                // std::cout << center(r.t()) << '\n' << '\n';
                 isect.t = t_temp;
                 isect.p = r.point_at(isect.t);
                 Vec3 cen = center(r.t());

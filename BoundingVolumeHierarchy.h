@@ -38,8 +38,8 @@ BVHNode::BVHNode(Intersectable **l, int n, float time0, float time1)
     }
     else
     {
-        int axis = int(3*drand48());
         // choose random axis
+        int axis = int(3*xorandf());
         bbox list_box;
         (*l)->bounding_box(time0, time1, list_box);
         // create centroid of the entire list of surfaces at the chosen axis
