@@ -19,37 +19,47 @@ inline float ffmax(float a, float b){ return a > b ? a : b; }
 class bbox
 {
 public:
-    Vec3 _min;
-    Vec3 _max;
+    Vec3 bounds[2];
 
     bbox(){}
-    bbox( const Vec3& a, const Vec3& b ){ _min = a; _max = b; }
-    Vec3 min() const { return _min; }
-    Vec3 max() const { return _max; }
+    bbox( const Vec3& a, const Vec3& b ){ bounds[0] = a; bounds[1] = b; }
+    Vec3 min() const { return bounds[0]; }
+    Vec3 max() const { return bounds[1]; }
     inline bool intersect(const Ray& r, float t_min, float t_max) const;
 };
 
 // optimized intersection function based on the paper by Amy Williams et al.
 inline bool bbox::intersect(const Ray& r, float t_min, float t_max) const
 {
-    for (int a = 0; a < 3; a++) {
-        float inv_dir = 1/r.d()[a];
-        float t0 = (min()[a]-r.o()[a]) * (inv_dir);
-        float t1 = (max()[a]-r.o()[a]) * (inv_dir);
-        if (inv_dir < 0)
-        {
-            std::swap(t0, t1);
-        }
-        t_min = t0 < t_min ? t_min : t0;
-        t_max = t1 > t_max ? t_max : t1;
-        if (t_max < t_min)
-        {
-            return false;
-        }
+    float t0, t1, tymin, tymax, tzmin, tzmax;
+
+    // if the sign is negative, the tmin and tmax are implicitly swapped
+    // through the sign array
+    t0 = (bounds[r.sign[0]].x()-r.o().x()) * r.invd().x();
+    t1 = (bounds[1-r.sign[0]].x()-r.o().x()) * r.invd().x();
+    tymin = (bounds[r.sign[1]].y()-r.o().y()) * r.invd().y();
+    tymax = (bounds[1-r.sign[1]].y()-r.o().y()) * r.invd().y();
+
+    if ((t1 > tymax) || (tymin > t0))
+    {
+        return false;
     }
 
-    return true;
+    t0 = ffmin(t0, tymin);
+    t1 = ffmax(t1, tymax);
 
+    tzmin = (bounds[r.sign[2]].z()-r.o().z()) * r.invd().z();
+    tzmax = (bounds[1-r.sign[2]].z()-r.o().z()) * r.invd().z();
+
+    if ((t1 > tzmax) || (tzmin > t0))
+    {
+        return false;
+    }
+
+    t0 = ffmin(t0, tzmin);
+    t1 = ffmax(t1, tzmax);
+
+    return ((t0 > t_min) && (t1 < t_max));
 }
 
 // generate a bounding box out of two bounding boxes
