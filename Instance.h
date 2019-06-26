@@ -29,7 +29,8 @@ public:
     {
         transform = t;
         shape = s;
-        transform_inverse = t.inverse();
+        transform_inverse = t;
+        transform_inverse.inverse();
     }
     Instance(Matrix t, Matrix i, Intersectable *s)
     {
@@ -37,6 +38,7 @@ public:
         shape = s;
         transform_inverse = i;
     }
+
     virtual bool intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const
     {
         Vec3 trans_ori = loc_transform(transform_inverse, r.o());
@@ -45,8 +47,9 @@ public:
 
         if (shape->intersect(trans_ray, t_min, t_max, isect))
         {
-            isect.p = loc_transform(transform, rec.p);
-            isect.normal = vec_transform(transform_inverse.transpose_mat(), rec.n);
+            isect.p = loc_transform(transform, isect.p);
+            isect.normal = vec_transform(transform_inverse.transpose_mat(), isect.normal);
+            return true;
         }
         else
         {
@@ -57,15 +60,16 @@ public:
 
     virtual bool bounding_box(float t0, float t1, bbox& box) const
     {
-        Vec3 translate = Vec3(transform[3][0], transform[3][1], transform[3][2]);
+        Vec3 translate = Vec3(transform.m[3][0], transform.m[3][1], transform.m[3][2]);
         Vec3 trans_min, trans_max = translate;
 
         for (int i = 0; i < 3; i++)
         {
             for (int j = 0; j < 3; j++)
             {
-                float a = transform[i][j]*box.min()[j];
-                float b = transform[i][j]*box.max()[j];
+                float tr = transform.m[i][j];
+                float a = tr*box.min()[j];
+                float b = tr*box.max()[j];
                 trans_min[i] += ffmin(a,b);
                 trans_max[i] += ffmax(a,b);
             }
@@ -77,4 +81,4 @@ public:
 
 };
 
-#endf
+#endif
