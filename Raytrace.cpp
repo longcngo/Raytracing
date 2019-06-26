@@ -160,10 +160,10 @@ int main()
     double duration;
 
     ofstream outfile;
-    outfile.open("output/raytrace_67.ppm", ios::out | ios::trunc);
+    outfile.open("output/raytrace_69.ppm", ios::out | ios::trunc);
     int image_w = 500;
     int image_h = 500;
-    int samples = 500;
+    int samples = 1000;
 
     std::cout << "Settings" << '\n';
     std::cout << "image_w: " << image_w << '\n';

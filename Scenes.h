@@ -567,14 +567,14 @@ Intersectable *cornell_box_cubes_scene(Camera& cam, LightList& lights, float x_m
     list[3] = new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 1, white);
     list[4] = new Instance(translate(555,555,0)*rotate_z(M_PI), new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 1, white));
     list[5] = new Instance(translate(555,0,555)*rotate_y(M_PI), new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 2, white));
-    list[6] = new Instance(translate(130,0,65)*rotate_y((1.0/6)*M_PI), new Cube(Vec3(0,0,0),Vec3(165,165,165), white));
-    list[7] = new Instance(translate(265,0,295)*rotate_y((-1.0/5)*M_PI), new Cube(Vec3(0,0,0),Vec3(165,330,165), white));
+    list[6] = new Instance(translate(130,0,65)*rotate_y((-1.0/6)*M_PI), new Cube(Vec3(0,0,0),Vec3(165,165,165), white));
+    list[7] = new Instance(translate(265,0,295)*rotate_y((1.0/5)*M_PI), new Cube(Vec3(0,0,0),Vec3(165,330,165), white));
 
     Light ** l_list = new Light*[1];
     l_list[0] = new AreaLight(light_rect, Color(15.0f, 15.0f, 15.0f), Color(100.0f, 98.0f, 88.0f));
     lights = LightList(l_list , 1);
 
-    return new BVHNode(list, 7, 0.0f, 0.0f);
+    return new BVHNode(list, 8, 0.0f, 0.0f);
 }
 
 #endif

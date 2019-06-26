@@ -6,8 +6,10 @@
 /*  Rectangle.h
 
     A class for rectangles in a scene, a subset of parallelograms that are
-    axis-aligned i.e. a rectangle that spans the xy-plane at a constant z
-    and the corners are ninety degrees.
+    axis-aligned i.e. a rectangle that spans the xy-plane at a constant z.
+
+    Using the parallelogram code was unwieldly as the arbitrary vectors are
+    harder to use then using simpler, and faster, code for intersections.
 
 */
 
@@ -96,40 +98,26 @@ public:
 
     virtual bool get_sample_point(const Vec3& init_point, Vec3& sample_point, Vec3& sample_dir) const
     {
-        if (const_axis == 0)
-        {
-            sample_point = Vec3(con, x_min + xorandf()*(x_max-x_min), y_min + xorandf()*(y_max-y_min));
-        }
-        else if (const_axis == 1)
-        {
-            sample_point = Vec3(x_min + xorandf()*(x_max-x_min), con, y_min + xorandf()*(y_max-y_min));
-        }
-        else
-        {
-            sample_point = Vec3(x_min + xorandf()*(x_max-x_min), y_min + xorandf()*(y_max-y_min), con);
-        }
+        sample_point = Vec3();
+        sample_point[const_axis] = con;
+        sample_point[a0] = x_min + xorandf()*(x_max-x_min);
+        sample_point[a1] = y_min + xorandf()*(y_max-y_min);
         sample_dir = sample_point-init_point;
         return true;
     }
 
     virtual bool bounding_box(float t0, float t1, bbox& box) const
     {
-        Vec3 small, large;
-        if (const_axis == 0)
-        {
-            small = Vec3(con, x_min , y_min);
-            large = Vec3(con, x_max , y_max);
-        }
-        else if (const_axis == 1)
-        {
-            small = Vec3(x_min, con, y_min);
-            large = Vec3(x_max, con , y_max);
-        }
-        else
-        {
-            small = Vec3(x_min, y_min, con);
-            large = Vec3(x_max, y_max , con);
-        }
+        Vec3 small = Vec3();
+        small[const_axis] = con;
+        small[a0] = x_min;
+        small[a1] = y_min;
+
+        Vec3 large = Vec3();
+        large[const_axis] = con;
+        large[a0] = x_max;
+        large[a1] = y_max;
+
         float epsilon = 0.0001f;
         small[const_axis] -= epsilon; large[const_axis] += epsilon;
         box = bbox(small, large);
