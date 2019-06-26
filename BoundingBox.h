@@ -31,35 +31,36 @@ public:
 // optimized intersection function based on the paper by Amy Williams et al.
 inline bool bbox::intersect(const Ray& r, float t_min, float t_max) const
 {
-    float t0, t1, tymin, tymax, tzmin, tzmax;
+    float interval_min, interval_max, tymin, tymax, tzmin, tzmax;
 
     // if the sign is negative, the tmin and tmax are implicitly swapped
     // through the sign array
-    t0 = (bounds[r.sign[0]].x()-r.o().x()) * r.invd().x();
-    t1 = (bounds[1-r.sign[0]].x()-r.o().x()) * r.invd().x();
-    tymin = (bounds[r.sign[1]].y()-r.o().y()) * r.invd().y();
-    tymax = (bounds[1-r.sign[1]].y()-r.o().y()) * r.invd().y();
+    interval_min = (bounds[r.sign[0]].x()-r.o().x()) * r.invd().x();
+    interval_max = (bounds[1-r.sign[0]].x()-r.o().x()) * r.invd().x();
 
-    if ((t1 > tymax) || (tymin > t0))
+    if (interval_min > interval_max)
     {
         return false;
     }
 
-    t0 = ffmin(t0, tymin);
-    t1 = ffmax(t1, tymax);
+    tymin = (bounds[r.sign[1]].y()-r.o().y()) * r.invd().y();
+    tymax = (bounds[1-r.sign[1]].y()-r.o().y()) * r.invd().y();
+
+    interval_min = ffmin(interval_min, tymin);
+    interval_max = ffmax(interval_max, tymax);
+
+    if (interval_min > interval_max)
+    {
+        return false;
+    }
 
     tzmin = (bounds[r.sign[2]].z()-r.o().z()) * r.invd().z();
     tzmax = (bounds[1-r.sign[2]].z()-r.o().z()) * r.invd().z();
 
-    if ((t1 > tzmax) || (tzmin > t0))
-    {
-        return false;
-    }
+    interval_min = ffmin(interval_min, tzmin);
+    interval_max = ffmax(interval_max, tzmax);
 
-    t0 = ffmin(t0, tzmin);
-    t1 = ffmax(t1, tzmax);
-
-    return ((t0 > t_min) && (t1 < t_max));
+    return (interval_min <= interval_max);
 }
 
 // generate a bounding box out of two bounding boxes

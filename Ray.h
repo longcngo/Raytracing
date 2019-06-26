@@ -25,8 +25,8 @@ public:
     {
         r[0] = o; r[1] = d; r[2] = 1.0f/d; _time = t;
         sign[0] = (r[2].x() < 0);
-        sign[1] = (r[2].y() < 0);;
-        sign[2] = (r[2].z() < 0);;
+        sign[1] = (r[2].y() < 0);
+        sign[2] = (r[2].z() < 0);
     }
     Vec3 o() const { return r[0]; }
     Vec3 d() const { return r[1]; }
