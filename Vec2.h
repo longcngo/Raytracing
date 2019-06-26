@@ -29,7 +29,7 @@ public:
         v[1] = yy;
     };
 
-    // unary operatooers
+    // unary operaters
     float operator[] (int i) const { return v[i]; }
     float& operator[] (int i) { return v[i]; }
     float x() const { return v[0]; }

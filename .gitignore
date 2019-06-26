@@ -1,3 +1,5 @@
-/input/*
-/output/*
+input/*
+output/*
 compiling_error.txt
+*/compiling_error.txt
+/build

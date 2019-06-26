@@ -31,7 +31,7 @@ public:
     {
         float dot1 = dot(r.d(), norm);
 
-        if (dot1 < PARALLEL_EPSILON && dot1 > PARALLEL_EPSILON)
+        if (dot1 < PARALLEL_EPSILON && dot1 > -PARALLEL_EPSILON)
         {
             return false;
         }
@@ -54,7 +54,7 @@ public:
             return false;
         }
 
-        float v = dot(unit_vector(v1), offset)/v0.length();
+        float v = dot(unit_vector(v1), offset)/v1.length();
 
         if (v < 0.0f || v > 1.0f)
         {
@@ -92,6 +92,8 @@ public:
         Vec3 large = Vec3(ffmax(ffmax(p0.x(), p1.x()), ffmax(p2.x(), p3.x())),
         ffmax(ffmax(p0.y(), p1.y()), ffmax(p2.y(), p3.y())),
         ffmax(ffmax(p0.z(), p1.z()), ffmax(p2.z(), p3.z())));
+        Vec3 epsilon = Vec3(0.0001f, 0.0001f, 0.0001f);
+        small -= epsilon; large += epsilon;
         box = bbox(small, large);
         return true;
     }

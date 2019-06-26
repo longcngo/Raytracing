@@ -18,9 +18,6 @@
 
 void parse_obj(const char *filename, Mesh* mesh, Intersectable** list, int& list_size)
 {
-    int verts_cnt = 0;
-    int verts_n_cnt = 0;
-    int verts_uv_cnt = 0;
 
     FILE * infile = fopen(filename, "r");
     if (infile == NULL)
