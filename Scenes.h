@@ -8,9 +8,12 @@
 #include "Sphere.h"
 #include "Triangle.h"
 #include "Parallelogram.h"
+#include "Rectangle.h"
+#include "Cube.h"
 #include "ObjLoader.h"
 #include "Camera.h"
 #include "Material.h"
+#include "Instance.h"
 #include "IntersectList.h"
 #include "BoundingVolumeHierarchy.h"
 #include "Lights.h"
@@ -89,6 +92,28 @@ Intersectable *simple_rect_scene(Camera& cam, LightList& lights, float x_max, fl
     return new IntersectList(list, list_size);
 }
 
+// cube primatives test scene
+Intersectable *simple_cube_scene(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+    Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
+    Vec3 lookat = Vec3(-0.15f,0.0f,0.5f);
+    Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+    float dist_to_focus = 10.0f;
+    float aperature = 0.1f;
+    cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+    Light ** l_list = new Light*[1];
+    l_list[0] = new PointLight(Vec3(10.0f, 10.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+    lights = LightList(l_list , 1);
+
+    int list_size = 2;
+    Intersectable **list = new Intersectable*[2];
+    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
+    list[1] = new Instance(rotate_y(M_PI), new Cube(Vec3(0.00f, 0.0f, 0.00f),Vec3(1.00f, 1.50f, 1.00f), new Lambertian(new ConstantTexture(Color(1.0f, 0.2f, 0.2f)))));
+
+    return new IntersectList(list, list_size);
+}
+
 // cube mesh test scene
 Intersectable *simple_mesh_scene1(Camera& cam, LightList& lights, float x_max, float y_max)
 {
@@ -134,6 +159,28 @@ Intersectable *simple_mesh_scene2(Camera& cam, LightList& lights, float x_max, f
     parse_obj("input/objs/cow.obj", cow_mesh, list, list_size);
 
     return new BVHNode(list, list_size, 0.0f, 0.0f);
+}
+
+// instancing test scene
+Intersectable *simple_transform_scene1(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+    Vec3 lookfrom = Vec3(8.0f, 5.0f, 9.0f);
+    Vec3 lookat = Vec3(-0.15f,0.0f,0.5f);
+    Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+    float dist_to_focus = 10.0f;
+    float aperature = 0.1f;
+    cam = Camera(lookfrom, lookat, vup, 30.0f, float(x_max)/float(y_max), aperature, dist_to_focus, 0, 1);
+
+    Light ** l_list = new Light*[1];
+    l_list[0] = new PointLight(Vec3(10.0f, 10.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
+    lights = LightList(l_list , 1);
+
+    Intersectable **list = new Intersectable*[2];
+    list[0] = new Sphere(Vec3(0.0f,-1001.25f, 0.0f), 1000.0f, new Lambertian(new ConstantTexture(Color(0.5f,0.5f,0.5f))));
+    Sphere *sp  = new Sphere(Vec3(-0.25f, 0.0f, 0.25f), 1.25f, new Lambertian(new ConstantTexture(Color(1.0f, 0.2f, 0.2f))));
+    list[1] = new Instance(rotate_y(0.5*M_PI)*scale(2.0f, 1.0f, 2.0f)*translate(0.5f,0.5f,0.5f), sp);
+
+    return new IntersectList(list, 2);
 }
 
 // stripe texture test scene
@@ -464,6 +511,70 @@ Intersectable *random_scene(Camera& cam, LightList& lights, float x_max, float y
     list[i++] = new Sphere(Vec3(4.0f,1.0f,0.0f), 1.0f, new Metal(new ConstantTexture(Color(0.7f,0.6f,0.5f)), 0.0f));
 
     return new BVHNode(list, i, t0, t1);
+}
+
+Intersectable *cornell_box_blank_scene(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+    Vec3 lookfrom = Vec3(278.0f, 278.0f, -800.0f);
+    Vec3 lookat = Vec3(278.0f, 278.0f, 0.0f);
+    Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+    float dist_to_focus = 10.0f;
+    float aperature = 0.0f;
+    float vfov = 40.0;
+    cam = Camera(lookfrom, lookat, vup, vfov, float(x_max)/float(y_max), aperature, dist_to_focus, 0.0f, 1.0f);
+
+    Material *red = new Lambertian(new ConstantTexture(Color(0.65f, 0.05f, 0.05f)));
+    Material *green = new Lambertian(new ConstantTexture(Color(0.12f, 0.45f, 0.15f)));
+    Material *white = new Lambertian(new ConstantTexture(Color(0.73f, 0.73f, 0.73f)));
+    Material *light = new DiffuseEmitter(new ConstantTexture(Color(15.0f, 15.0f, 15.0f)));
+
+    Intersectable **list = new Intersectable*[10];
+    Instance *light_rect = new Instance(translate(213,554,0)*rotate_z(M_PI), new Rectangle(213.0f, 343.0f, 227.0f, 332.0f, 554.0f, 1, light));
+    list[0] = light_rect;
+    list[1] = new Instance(translate(555,0,555)*rotate_y(M_PI), new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 0, red));
+    list[2] = new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 0, green);
+    list[3] = new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 1, white);
+    list[4] = new Instance(translate(555,555,0)*rotate_z(M_PI), new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 1, white));
+    list[5] = new Instance(translate(555,0,555)*rotate_y(M_PI), new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 2, white));
+
+    Light ** l_list = new Light*[1];
+    l_list[0] = new AreaLight(light_rect, Color(15.0f, 15.0f, 15.0f), Color(100.0f, 98.0f, 88.0f));
+    lights = LightList(l_list , 0);
+
+    return new BVHNode(list, 6, 0.0f, 0.0f);
+}
+
+Intersectable *cornell_box_cubes_scene(Camera& cam, LightList& lights, float x_max, float y_max)
+{
+    Vec3 lookfrom = Vec3(278.0f, 278.0f, -800.0f);
+    Vec3 lookat = Vec3(278.0f, 278.0f, 0.0f);
+    Vec3 vup = Vec3(0.0f,1.0f,0.0f);
+    float dist_to_focus = 10.0f;
+    float aperature = 0.0f;
+    float vfov = 40.0;
+    cam = Camera(lookfrom, lookat, vup, vfov, float(x_max)/float(y_max), aperature, dist_to_focus, 0.0f, 1.0f);
+
+    Material *red = new Lambertian(new ConstantTexture(Color(0.65f, 0.05f, 0.05f)));
+    Material *green = new Lambertian(new ConstantTexture(Color(0.12f, 0.45f, 0.15f)));
+    Material *white = new Lambertian(new ConstantTexture(Color(0.73f, 0.73f, 0.73f)));
+    Material *light = new DiffuseEmitter(new ConstantTexture(Color(15.0f, 15.0f, 15.0f)));
+
+    Intersectable **list = new Intersectable*[10];
+    Instance *light_rect = new Instance(translate(343,554,237)*rotate_z(M_PI), new Rectangle(0.0f, 130.0f, 0.0f, 105.0f, 0.0f, 1, light));
+    list[0] = light_rect;
+    list[1] = new Instance(translate(555,0,555)*rotate_y(M_PI), new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 0, red));
+    list[2] = new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 0, green);
+    list[3] = new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 1, white);
+    list[4] = new Instance(translate(555,555,0)*rotate_z(M_PI), new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 1, white));
+    list[5] = new Instance(translate(555,0,555)*rotate_y(M_PI), new Rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, 2, white));
+    list[6] = new Instance(translate(130,0,65)*rotate_y((1.0/6)*M_PI), new Cube(Vec3(0,0,0),Vec3(165,165,165), white));
+    list[7] = new Instance(translate(265,0,295)*rotate_y((-1.0/5)*M_PI), new Cube(Vec3(0,0,0),Vec3(165,330,165), white));
+
+    Light ** l_list = new Light*[1];
+    l_list[0] = new AreaLight(light_rect, Color(15.0f, 15.0f, 15.0f), Color(100.0f, 98.0f, 88.0f));
+    lights = LightList(l_list , 1);
+
+    return new BVHNode(list, 7, 0.0f, 0.0f);
 }
 
 #endif
