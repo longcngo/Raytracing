@@ -40,14 +40,10 @@ public:
         {
             for (int j = 0; j < 4; j++)
             {
-                m[i][j] = mm[i][j];
+                m[i][j] = mm.m[i][j];
             }
         }
     };
-
-    // unary operatooers
-    float operator[] (int i, int j) const { return m[i][j]; }
-    float& operator[] (int i, int j) { return m[i][j]; }
 
     // binary operators
     inline Matrix& operator+=(const Matrix& mat);
@@ -55,29 +51,23 @@ public:
     inline Matrix& operator*=(const Matrix& mat);
     inline Matrix& operator*=(float t);
     inline Matrix& operator/=(float t);
-    inline Matrix operator+(const Matrix& mat1, const Matrix& mat2) const;
-    inline Matrix operator-(const Matrix& mat1, const Matrix& mat2) const;
-    inline Matrix operator*(const Matrix& mat1, const Matrix& mat2) const;
-    inline Vec3 operator*(const Matrix& mat, const Vec3& vec) const;
-    inline Matrix operator*(const Matrix& mat, float t) const;
-    inline Matrix operator/(const Matrix& mat, float t) const;
 
-    inline Vec3 loc_transform(const Matrix& mat, const Vec3& vec) const;
-    inline Vec3 vec_transform(const Matrix& mat, const Vec3& vec) const;
+    inline Vec3 loc_transform(const Matrix& mat, const Vec3& vec);
+    inline Vec3 vec_transform(const Matrix& mat, const Vec3& vec);
 
-    inline Matrix zero() const;
-    inline Matrix identity() const;
-    inline Matrix translate(float x, float y, float z) const;
-    inline Matrix scale(float x, float y, float z) const;
-    inline Matrix rotate(const Vec3& axis, float angle) const;
-    inline Matrix rotate_x(float angle) const;
-    inline Matrix rotate_y(float angle) const;
-    inline Matrix rotate_z(float angle) const;
-    inline Matrix view_mat(const Vec3& eye, const Vec3& gaze, const Vec3& up) const;
+    inline Matrix zero();
+    inline Matrix identity();
+    inline Matrix translate(float x, float y, float z);
+    inline Matrix scale(float x, float y, float z);
+    inline Matrix rotate(const Vec3& axis, float angle);
+    inline Matrix rotate_x(float angle);
+    inline Matrix rotate_y(float angle);
+    inline Matrix rotate_z(float angle);
+    inline Matrix view_mat(const Vec3& eye, const Vec3& gaze, const Vec3& up);
 
-    inline float determinant() const;
-    inline void transpose() const;
-    inline void inverse() const;
+    inline float determinant();
+    inline void transpose();
+    inline void inverse();
 
     inline Matrix transpose_mat() const;
     inline Matrix inverse_mat() const;
@@ -109,15 +99,108 @@ inline std::ostream& operator<<(std::ostream &os, const Matrix &t)
     return os;
 }
 
-inline Matrix& Matrix::operator+=(const Matrix& mat)
+inline Matrix operator+(const Matrix& mat1, const Matrix& mat2)
 {
-    Matrix ret = *this;
+    Matrix ret;
 
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            ret.m[i][j] += mat[i][j];
+            ret.m[i][j] = mat1.m[i][j] + mat2.m[i][j];
+        }
+    }
+
+    return ret;
+}
+
+inline Matrix operator-(const Matrix& mat1, const Matrix& mat2)
+{
+    Matrix ret;
+
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            ret.m[i][j] = mat1.m[i][j] - mat2.m[i][j];
+        }
+    }
+
+    return ret;
+}
+
+inline Matrix operator*(const Matrix& mat1, const Matrix& mat2)
+{
+    Matrix ret;
+
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            float sum = 0.0f;
+            for (int k = 0; k < 4; k++)
+            {
+                sum += mat1.m[i][k] * mat2.m[k][j];
+            }
+            ret.m[i][j] = sum;
+        }
+    }
+
+    return ret;
+}
+
+inline Vec3 operator*(const Matrix& mat, const Vec3& vec)
+{
+    Vec3 ret;
+    float temp;
+
+    ret[0] = vec[0]*mat.m[0][0] + vec[1]*mat.m[0][1] + vec[2]*mat.m[0][2] + mat.m[0][3];
+    ret[1] = vec[0]*mat.m[1][0] + vec[1]*mat.m[1][1] + vec[2]*mat.m[1][2] + mat.m[1][3];
+    ret[2] = vec[0]*mat.m[2][0] + vec[1]*mat.m[2][1] + vec[2]*mat.m[2][2] + mat.m[2][3];
+    temp = vec[0]*mat.m[3][0] + vec[1]*mat.m[3][1] + vec[2]*mat.m[3][2] + mat.m[3][3];
+    ret /= temp;
+
+    return ret;
+}
+
+inline Matrix operator*(const Matrix& mat, float t)
+{
+    Matrix ret;
+
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            ret.m[i][j] = mat.m[i][j] * t;
+        }
+    }
+
+    return ret;
+}
+
+inline Matrix operator/(const Matrix& mat, float t)
+{
+    Matrix ret;
+    float k = 1/t;
+
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            ret.m[i][j] = mat.m[i][j] * k;
+        }
+    }
+
+    return ret;
+}
+
+inline Matrix& Matrix::operator+=(const Matrix& mat)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            m[i][j] += mat.m[i][j];
         }
     }
 
@@ -126,13 +209,11 @@ inline Matrix& Matrix::operator+=(const Matrix& mat)
 
 inline Matrix& Matrix::operator-=(const Matrix& mat)
 {
-    Matrix ret = *this;
-
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            ret.m[i][j] -= mat[i][j];
+            m[i][j] -= mat.m[i][j];
         }
     }
 
@@ -150,9 +231,9 @@ inline Matrix& Matrix::operator*=(const Matrix& mat)
             float sum = 0.0f;
             for (int k = 0; k < 4; k++)
             {
-                sum += ret.m[i][k] * mat[k][j]
+                sum += ret.m[i][k] * mat.m[k][j];
             }
-            ret.m[i][j] = sum;
+            m[i][j] = sum;
         }
     }
 
@@ -161,13 +242,11 @@ inline Matrix& Matrix::operator*=(const Matrix& mat)
 
 inline Matrix& Matrix::operator*=(float t)
 {
-    Matrix ret = *this;
-
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            ret.m[i][j] *= t;
+            m[i][j] *= t;
         }
     }
 
@@ -176,133 +255,36 @@ inline Matrix& Matrix::operator*=(float t)
 
 inline Matrix& Matrix::operator/=(float t)
 {
-    Matrix ret = *this;
     float k = 1/t;
 
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            ret.m[i][j] *= k;
+            m[i][j] *= k;
         }
     }
 
     return *this;
 }
 
-inline Matrix Matrix::operator+(const Matrix& mat1, const Matrix& mat2) const
-{
-    Matrix ret;
-
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            ret[i][j] = mat1[i][j] + mat2[i][j];
-        }
-    }
-
-    return ret;
-}
-
-inline Matrix Matrix::operator-(const Matrix& mat1, const Matrix& mat2) const
-{
-    Matrix ret;
-
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            ret[i][j] = mat1[i][j] - mat2[i][j];
-        }
-    }
-
-    return ret;
-}
-
-inline Matrix Matrix::operator*(const Matrix& mat1, const Matrix& mat2) const
-{
-    Matrix ret;
-
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            float sum = 0.0f;
-            for (int k = 0; k < 4; k++)
-            {
-                sum += ret.m[i][k] * mat[k][j]
-            }
-            ret.m[i][j] = sum;
-        }
-    }
-
-    return ret;
-}
-
-inline Vec3 Matrix::operator*(const Matrix& mat, const Vec3& vec) const
-{
-    Vec3 ret;
-    float temp;
-
-    ret[0] = vec[0]*mat[0][0] + vec[1]*mat[0][1] + vec[2]*mat[0][2] + mat[0][3];
-    ret[1] = vec[0]*mat[1][0] + vec[1]*mat[1][1] + vec[2]*mat[1][2] + mat[1][3];
-    ret[2] = vec[0]*mat[2][0] + vec[1]*mat[2][1] + vec[2]*mat[2][2] + mat[2][3];
-    temp = vec[0]*mat[3][0] + vec[1]*mat[3][1] + vec[2]*mat[3][2] + mat[3][3];
-    ret /= temp;
-
-    return ret;
-}
-
-inline Matrix Matrix::operator*(const Matrix& mat, float t) const
-{
-    Matrix ret;
-
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            ret[i][j] = mat[i][j] * t;
-        }
-    }
-
-    return ret;
-}
-
-inline Matrix Matrix::operator/(const Matrix& mat, float t) const
-{
-    Matrix ret;
-    float k = 1/t;
-
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            ret[i][j] = mat[i][j] * k;
-        }
-    }
-
-    return ret;
-}
-
-
-inline Vec3 Matrix::loc_transform(const Matrix& mat, const Vec3& vec) const
+inline Vec3 loc_transform(const Matrix& mat, const Vec3& vec)
 {
     return mat*vec;
 }
 
-inline Vec3 Matrix::vec_transform(const Matrix& mat, const Vec3& vec) const
+inline Vec3 vec_transform(const Matrix& mat, const Vec3& vec)
 {
     Vec3 ret;
 
-    ret[0] = vec[0]*mat[0][0] + vec[1]*mat[0][1] + vec[2]*mat[0][2];
-    ret[1] = vec[0]*mat[1][0] + vec[1]*mat[1][1] + vec[2]*mat[1][2];
-    ret[2] = vec[0]*mat[2][0] + vec[1]*mat[2][1] + vec[2]*mat[2][2];
+    ret[0] = vec[0]*mat.m[0][0] + vec[1]*mat.m[0][1] + vec[2]*mat.m[0][2];
+    ret[1] = vec[0]*mat.m[1][0] + vec[1]*mat.m[1][1] + vec[2]*mat.m[1][2];
+    ret[2] = vec[0]*mat.m[2][0] + vec[1]*mat.m[2][1] + vec[2]*mat.m[2][2];
 
     return ret;
 }
 
-inline Matrix Matrix::zero()
+inline Matrix zero()
 {
     Matrix ret;
 
@@ -314,7 +296,7 @@ inline Matrix Matrix::zero()
     return ret;
 }
 
-inline Matrix Matrix::identity() const
+inline Matrix identity()
 {
     Matrix ret;
 
@@ -326,105 +308,105 @@ inline Matrix Matrix::identity() const
     return ret;
 }
 
-inline Matrix Matrix::translate(float x, float y, float z) const
+inline Matrix translate(float x, float y, float z)
 {
     Matrix ret = identity();
 
-    ret[0][3] = x;
-    ret[1][3] = y;
-    ret[2][3] = z;
+    ret.m[0][3] = x;
+    ret.m[1][3] = y;
+    ret.m[2][3] = z;
 
     return ret;
 }
 
-inline Matrix Matrix::scale(float x, float y, float z) const
+inline Matrix scale(float x, float y, float z)
 {
     Matrix ret = identity();
 
-    ret[0][0] = x;
-    ret[1][1] = y;
-    ret[2][2] = z;
+    ret.m[0][0] = x;
+    ret.m[1][1] = y;
+    ret.m[2][2] = z;
 
     return ret;
 }
 
-inline Matrix Matrix::rotate(const Vec3& axis, float angle) const
+inline Matrix rotate(const Vec3& axis, float angle)
 {
     Matrix ret = identity();
-    axis = unit_vector(axis);
-    float x = axis.x();
-    float y = axis.y();
-    float z = axis.z();
+    Vec3 ax = unit_vector(axis);
+    float x = ax.x();
+    float y = ax.y();
+    float z = ax.z();
     float cosine = cos(angle);
     float sine = sin(angle);
     float t = 1-cosine;
 
-    ret[0][0] = t*x*x + cosine;
-    ret[0][1] = t*x*y - sine*z;
-    ret[0][2] = t*x*z + sine*y;
-    ret[0][3] = 0.0f;
+    ret.m[0][0] = t*x*x + cosine;
+    ret.m[0][1] = t*x*y - sine*z;
+    ret.m[0][2] = t*x*z + sine*y;
+    ret.m[0][3] = 0.0f;
 
-    ret[1][0] = t*y*x + sine*z;
-    ret[1][1] = t*y*y + cosine;
-    ret[1][2] = t*y*z - sine*x;
-    ret[1][3] = 0.0f;
+    ret.m[1][0] = t*y*x + sine*z;
+    ret.m[1][1] = t*y*y + cosine;
+    ret.m[1][2] = t*y*z - sine*x;
+    ret.m[1][3] = 0.0f;
 
-    ret[2][0] = t*z*x - sine*y;
-    ret[2][1] = t*z*y + sine*x;
-    ret[2][2] = t*z*z + cosine;
-    ret[2][3] = 0.0f;
+    ret.m[2][0] = t*z*x - sine*y;
+    ret.m[2][1] = t*z*y + sine*x;
+    ret.m[2][2] = t*z*z + cosine;
+    ret.m[2][3] = 0.0f;
 
-    ret[3][0] = 0.0f;
-    ret[3][1] = 0.0f;
-    ret[3][2] = 0.0f;
-    ret[3][3] = 1.0f;
+    ret.m[3][0] = 0.0f;
+    ret.m[3][1] = 0.0f;
+    ret.m[3][2] = 0.0f;
+    ret.m[3][3] = 1.0f;
 
     return ret;
 }
 
-inline Matrix Matrix::rotate_x(float angle) const
+inline Matrix rotate_x(float angle)
 {
     Matrix ret = identity();
     float cosine = cos(angle);
     float sine = sin(angle);
 
-    ret[1][1] = cosine;
-    ret[1][2] = -sine;
-    ret[2][1] = sine;
-    ret[2][2] = cosine;
+    ret.m[1][1] = cosine;
+    ret.m[1][2] = -sine;
+    ret.m[2][1] = sine;
+    ret.m[2][2] = cosine;
 
     return ret;
 }
 
-inline Matrix Matrix::rotate_y(float angle) const
+inline Matrix rotate_y(float angle)
 {
     Matrix ret = identity();
     float cosine = cos(angle);
     float sine = sin(angle);
 
-    ret[0][0] = cosine;
-    ret[0][2] = sine;
-    ret[2][0] = -sine;
-    ret[2][2] = cosine;
+    ret.m[0][0] = cosine;
+    ret.m[0][2] = sine;
+    ret.m[2][0] = -sine;
+    ret.m[2][2] = cosine;
 
     return ret;
 }
 
-inline Matrix Matrix::rotate_z(float angle) const
+inline Matrix rotate_z(float angle)
 {
     Matrix ret = identity();
     float cosine = cos(angle);
     float sine = sin(angle);
 
-    ret[0][0] = cosine;
-    ret[0][1] = -sine;
-    ret[1][0] = sine;
-    ret[1][1] = cosine;
+    ret.m[0][0] = cosine;
+    ret.m[0][1] = -sine;
+    ret.m[1][0] = sine;
+    ret.m[1][1] = cosine;
 
     return ret;
 }
 
-inline Matrix Matrix::view_mat(const Vec3& eye, const Vec3& gaze, const Vec3& up) const
+inline Matrix view_mat(const Vec3& eye, const Vec3& gaze, const Vec3& up)
 {
     // ONB basis based on params
     Vec3 w = -unit_vector(gaze);
@@ -436,51 +418,53 @@ inline Matrix Matrix::view_mat(const Vec3& eye, const Vec3& gaze, const Vec3& up
 
     // Translate eye to xyz origin
     Matrix move = identity();
-    move[0][3] = -(eye.x());
-    move[1][3] = -(eye.y());
-    move[2][3] = -(eye.z());
+    move.m[0][3] = -(eye.x());
+    move.m[1][3] = -(eye.y());
+    move.m[2][3] = -(eye.z());
 
     ret = ret*move;
     return ret;
 }
 
-inline float Matrix::determinant() const
+inline float Matrix::determinant()
 {
     float det;
 
-    float det =  m[0][0] * det3(m[1][1], m[1][2], m[1][3],
-                                m[2][1], m[2][2], m[2][3],
-                                m[3][1], m[3][2], m[3][3]);
+    det =  m[0][0] * det3(m[1][1], m[1][2], m[1][3],
+                          m[2][1], m[2][2], m[2][3],
+                          m[3][1], m[3][2], m[3][3]);
 
-    float det -= m[0][1] * det3(m[1][0], m[1][2], m[1][3],
-                                m[2][0], m[2][2], m[2][3],
-                                m[3][0], m[3][2], m[3][3]);
+    det -= m[0][1] * det3(m[1][0], m[1][2], m[1][3],
+                          m[2][0], m[2][2], m[2][3],
+                          m[3][0], m[3][2], m[3][3]);
 
-    float det += m[0][2] * det3(m[1][0], m[1][1], m[1][3],
-                                m[2][0], m[2][1], m[2][3],
-                                m[3][0], m[3][1], m[3][3]);
+    det += m[0][2] * det3(m[1][0], m[1][1], m[1][3],
+                          m[2][0], m[2][1], m[2][3],
+                          m[3][0], m[3][1], m[3][3]);
 
-    float det -= m[0][3] * det3(m[1][0], m[1][1], m[1][2],
-                                m[2][0], m[2][1], m[2][2],
-                                m[3][0], m[3][1], m[3][2]);
+    det -= m[0][3] * det3(m[1][0], m[1][1], m[1][2],
+                          m[2][0], m[2][1], m[2][2],
+                          m[3][0], m[3][1], m[3][2]);
 
     return det;
 }
 
-inline void Matrix::transpose() const
+inline void Matrix::transpose()
 {
+    Matrix tranpose;
+
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            float temp = m[i][j];
-            m[i][j] = m[j][i];
-            m[j][i] = temp;
+            tranpose.m[i][j] = m[j][i];
         }
     }
+
+    *this = tranpose;
 }
 
-inline void Matrix::inverse() const
+inline void Matrix::inverse()
 {
     float det = 1/determinant();
     Matrix inverse;
@@ -544,12 +528,12 @@ inline Matrix Matrix::transpose_mat() const
 {
     Matrix ret = *this;
     ret.transpose();
-    return *this;
+    return ret;
 }
 
 inline Matrix Matrix::inverse_mat() const
 {
     Matrix ret = *this;
     ret.inverse();
-    return *this;
+    return ret;
 }
