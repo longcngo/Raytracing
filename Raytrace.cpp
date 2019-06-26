@@ -38,7 +38,7 @@ Color direct_lighting(const Intersection& isect, const Ray& r, Intersectable *wo
             Ray shadow = Ray(isect.p, ls.dir , r.t());
             if (!(world->intersect(shadow, 0.0001f, FLT_MAX, isect_shadow)) ||
                 (light_dist < isect_shadow.t) ||
-                (isect_shadow.mat->emitted(isect_shadow.uv, isect_shadow.p) != Color()))
+                (isect_shadow.mat->emitted(shadow, isect, isect_shadow.uv, isect_shadow.p) != Color()))
             {
                 isect.mat->illuminated(isect, radiance);
                 float ndotl = dot(isect.normal, ls.dir);
@@ -60,7 +60,7 @@ Color indirect_lighting(Intersection& isect, const Ray& r, Intersectable *world,
 
     if (world->intersect(r, 0.0001f, FLT_MAX, isect))
     {
-        Color emitted = isect.mat->emitted(isect.uv, isect.p);
+        Color emitted = isect.mat->emitted(r, isect, isect.uv, isect.p);
         bool didScatter = isect.mat->scatter(r, isect, attenuation, scattered);
         if (depth < 50 && didScatter)
         {
@@ -86,7 +86,7 @@ Color raytrace(const Ray& r, Intersectable *world, LightList *lights)
 
     if (world->intersect(r, 0.0001f, FLT_MAX, isect))
     {
-        radiance = isect.mat->emitted(isect.uv, isect.p);
+        radiance = isect.mat->emitted(r, isect, isect.uv, isect.p);
         radiance += direct_lighting(isect, r, world, lights);
         radiance += indirect_lighting(isect, r, world, 0);
         return radiance;
@@ -109,8 +109,10 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
     //world = simple_sphere_scene(cam, lights, x_max, y_max);
     //world = simple_triangle_scene(cam, lights, x_max, y_max);
     //world = simple_rect_scene(cam, lights, x_max, y_max);
-    world = simple_mesh_scene1(cam, lights, x_max, y_max);
+    //world = simple_cube_scene(cam, lights, x_max, y_max);
+    //world = simple_mesh_scene1(cam, lights, x_max, y_max);
     //world = simple_mesh_scene2(cam, lights, x_max, y_max);
+    //world = simple_transform_scene1(cam, lights, x_max, y_max);
     //world = simple_texture_scene(cam, lights, x_max, y_max);
     //world = simple_perlin_scene(cam, lights, x_max, y_max);
     //world = simple_turb_scene(cam, lights, x_max, y_max);
@@ -123,6 +125,8 @@ void scan_image(ofstream& os, int x_max, int y_max, int samples)
     //world = simple_emitter_scene2(cam, lights, x_max, y_max);
     //world = three_sphere_scene(cam, lights, x_max, y_max);
     //world = random_scene(cam, lights, x_max, y_max);
+    //world = cornell_box_blank_scene(cam, lights, x_max, y_max);
+    world = cornell_box_cubes_scene(cam, lights, x_max, y_max);
 
     for (int j = y_max-1; j >= 0; j--)
     {
@@ -156,10 +160,10 @@ int main()
     double duration;
 
     ofstream outfile;
-    outfile.open("output/raytrace_62.ppm", ios::out | ios::trunc);
-    int image_w = 300;
-    int image_h = 300;
-    int samples = 100;
+    outfile.open("output/raytrace_67.ppm", ios::out | ios::trunc);
+    int image_w = 500;
+    int image_h = 500;
+    int samples = 500;
 
     std::cout << "Settings" << '\n';
     std::cout << "image_w: " << image_w << '\n';

@@ -81,7 +81,7 @@ Intersectable *simple_rect_scene(Camera& cam, LightList& lights, float x_max, fl
     l_list[0] = new PointLight(Vec3(10.0f, 10.0f, 5.0f), Color(1.0f, 0.9f, 0.8f), Color(100.0f, 98.0f, 88.0f));
     Parallelogram *para = new Parallelogram(Vec3(-0.25f, 0.0f, 0.25f), Vec3(0.0f,1.0f,1.25f), Vec3(-1.25f,0.0f,0.0f),
                                 new DiffuseEmitter(new ConstantTexture(Color(4.0f,4.0f,4.0f))));
-    l_list[1] = new AreaLight(para, para->mat_ptr->emitted(Vec2(0,0),para->base), Color(100.0f, 98.0f, 88.0f));
+    l_list[1] = new AreaLight(para, Color(4.0f,4.0f,4.0f), Color(100.0f, 98.0f, 88.0f));
     lights = LightList(l_list , 2);
 
     int list_size = 2;

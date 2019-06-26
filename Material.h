@@ -61,7 +61,7 @@ public:
 
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const = 0;
     virtual bool illuminated(const Intersection& isect, Color& attenuation) const { return false; }
-    virtual Color emitted(const Vec2& uv, const Vec3& p) const { return Color(); }
+    virtual Color emitted(const Ray& r_in, const Intersection& isect, const Vec2& uv, const Vec3& p) const { return Color(); }
 };
 
 // diffuse material
@@ -95,8 +95,14 @@ public:
     DiffuseEmitter(Texture* e) { emit = e; isReflective = false; isEmissive = true; }
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const
     { return false; }
-    virtual Color emitted(const Vec2& uv, const Vec3& p) const
-    { return emit->value(uv, p); }
+    virtual Color emitted(const Ray& r_in, const Intersection& isect, const Vec2& uv, const Vec3& p) const
+    {
+        if (dot(isect.normal, r_in.d()) < 0.0)
+        {
+            return emit->value(uv, p);
+        }
+        return Color();
+    }
 
 };
 
@@ -111,10 +117,10 @@ public:
          if (f > 1.0f) { fuzz = 1.0f;} else { fuzz = f; } }
     virtual bool scatter(const Ray& r_in, const Intersection& isect, Color& attenuation, Ray& scattered) const
     {
-        Vec3 reflected = reflect(r_in.dir, isect.normal);
+        Vec3 reflected = reflect(r_in.d(), isect.normal);
         scattered = Ray(isect.p, reflected + fuzz*random_in_unit_sphere(), r_in.t());
         attenuation = albedo->value(isect.uv, isect.p);
-        return (dot(scattered.dir, isect.normal) > 0);
+        return (dot(scattered.d(), isect.normal) > 0);
     }
 
 };
