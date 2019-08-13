@@ -19,7 +19,7 @@ my graphics knowledge and trying to build up a project from scratch
 - Triangle Meshes
 - Instancing
 
-##Resources
+## Resources
 - [Peter Shirly's in a Weekend Series](http://in1weekend.blogspot.com/2016/01/ray-tracing-in-one-weekend.html) for an easy going introduction in coding up a simple ray tracer.
 - [Realistic Ray Tracing](https://www.indiebound.org/book/9781568814612) which is basically a more advanced and formal version of the Weekend Series. Also Includes C++ code to follow along.
 - [An Efficient and Robust Ray–Box Intersection Algorithm](https://people.csail.mit.edu/amy/papers/box-jgt.pdf) A paper which describes an optimized bounding box intersection.
